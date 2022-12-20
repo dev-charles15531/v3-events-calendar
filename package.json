@@ -16,6 +16,8 @@
     "test:unit": "vitest --environment jsdom --root src/"
   },
   "dependencies": {
+    "@vueuse/components": "^9.7.0",
+    "@vueuse/core": "^9.7.0",
     "vue": "^3.2.45"
   },
   "devDependencies": {
