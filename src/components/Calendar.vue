@@ -1,7 +1,7 @@
 <template>
   <div ref="calendarContainer" class="min-h-full min-w-full text-gray-800">
-    <div class="w-full border grid grid-cols-7">
-      <Top :today="today" />
+    <div v-if="!willUpdate" class="w-full border grid grid-cols-7 moveLeft">
+      <Top />
       <div
         v-for="day in daysOfTheWeek"
         class="text-center text-sm md:text-base lg:text-lg font-medium border"
@@ -22,8 +22,11 @@
         class="h-36 w-full border align-top"
       >
         <div
-          class="w-full h-full text-center"
-          :class="{ 'bg-gray-300 text-gray-600 font-bold': day == currentDay }"
+          class="w-full h-full text-center transition-colors"
+          :class="{
+            'bg-gray-300 text-gray-600 font-bold': isToday(day),
+            'hover:bg-gray-100 hover:text-gray-700': !isToday(day),
+          }"
         >
           {{ day }}
         </div>
@@ -33,11 +36,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { vElementSize } from "@vueuse/components";
-import { useElementSize } from "@vueuse/core";
+import { ref, onMounted, onUpdated } from "vue";
 import Top from "@/components/Top.vue";
+import { useCalendarStore } from "../stores/calendar";
 
+const willUpdate = ref(false);
+
+// Store initialization and subscription
+const calendarStore = useCalendarStore();
+calendarStore.$subscribe((mutation, state) => {
+  getDaysInMonth();
+  getFirstDayOfMonth();
+  willUpdate.value = true;
+});
+
+// component variables
 const daysOfTheWeek = {
   1: "Sunday",
   2: "Monday",
@@ -47,26 +60,68 @@ const daysOfTheWeek = {
   6: "Friday",
   7: "Saturday",
 };
+const daysInCurrentMonth = ref(0);
+const firstDayOfCurrentMonth = ref(0);
 
-const getDaysInMonth = (year, month) => {
-  return new Date(year, month, 0).getDate();
+/**
+ * Gets the number of days present in a month
+ * The month is gottenn from the calendar store
+ */
+const getDaysInMonth = () => {
+  daysInCurrentMonth.value = new Date(
+    calendarStore.getYear,
+    calendarStore.getMonth + 1, // 👈️ months are 0-based
+    0
+  ).getDate();
 };
 
-const getFirstDayOfMonth = (year, month) => {
-  return new Date(year, month, 1).getDay();
+/**
+ * Gets in number, the first day of a month
+ * The month is gottenn from the calendar store
+ */
+const getFirstDayOfMonth = () => {
+  firstDayOfCurrentMonth.value = new Date(
+    calendarStore.getYear,
+    calendarStore.getMonth,
+    1
+  ).getDay();
 };
 
-const today = ref(new Date());
-const currentYear = today.value.getFullYear();
-const currentMonth = today.value.getMonth();
-const currentDay = today.value.getDate();
+/**
+ * Validates a day to check if it's today or not
+ *
+ * @param {number} day The day to validate
+ * @return boolean True or false if it's today or not
+ */
+const isToday = (day) => {
+  let today = new Date();
+  if (
+    calendarStore.getYear == today.getFullYear() &&
+    calendarStore.getMonth == today.getMonth() &&
+    day == today.getDate()
+  )
+    return true;
 
-// 👇️ Current Month
-const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth + 1); // 👈️ months are 0-based
-const firstDayOfCurrentMonth = getFirstDayOfMonth(currentYear, currentMonth);
+  return false;
+};
 
-const getNulledDaysInMonth = computed(() => {
-  if (daysInCurrentMonth == 28) return 0;
-  return 35 - daysInCurrentMonth;
+/************************************************************************
+ *  LIFECYCLE HOOKS
+ * **********************************************************************
+ */
+onMounted(() => {
+  getDaysInMonth();
+  getFirstDayOfMonth();
+});
+
+onUpdated(() => {
+  willUpdate.value = false;
 });
 </script>
+
+<style scoped>
+.moveLeft {
+  transition: left 0.3s ease-in-out;
+  -webkit-transition: left 0.3s ease-in-out;
+}
+</style>

@@ -16,8 +16,10 @@
     "test:unit": "vitest --environment jsdom --root src/"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^3.6.3",
     "@vueuse/components": "^9.7.0",
     "@vueuse/core": "^9.7.0",
+    "pinia": "^2.0.28",
     "vue": "^3.2.45"
   },
   "devDependencies": {
