@@ -24,11 +24,54 @@
         <div
           class="w-full h-full text-center transition-colors"
           :class="{
-            'bg-gray-300 text-gray-600 font-bold': isToday(day),
+            'bg-slate-200 text-gray-600 font-medium': isToday(day),
             'hover:bg-gray-100 hover:text-gray-700': !isToday(day),
           }"
         >
           {{ day }}
+
+          <div v-for="j in 3">
+            <div
+              class="w-full px-2 py-1 flex space-x-1 items-center whitespace-nowrap overflow-hidden hover:border hover:border-gray-200 cursor-pointer rounded-sm"
+            >
+              <div class="w-1/12">
+                <div class="h-2 w-2 rounded-full bg-green-300"></div>
+              </div>
+              <div class="w-11/12">
+                <h5 class="text-xs tracking-tight text-clip overflow-hidden">
+                  This is a boy that loves playing
+                </h5>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="mt-2 w-full px-2 py-1 flex space-x-2 items-center whitespace-nowrap overflow-hidden hover:text-gray-800 hover:font-medium cursor-pointer rounded-sm"
+          >
+            <div class="w-1/12">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                />
+              </svg>
+            </div>
+            <div class="w-11/12">
+              <h6
+                class="text-xs tracking-tight text-clip text-left overflow-hidden"
+              >
+                5 more events
+              </h6>
+            </div>
+          </div>
         </div>
       </div>
     </div>
