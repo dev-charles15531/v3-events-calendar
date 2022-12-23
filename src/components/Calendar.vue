@@ -1,6 +1,6 @@
 <template>
   <div ref="calendarContainer" class="min-h-full min-w-full text-gray-800">
-    <div v-if="!willUpdate" class="w-full border grid grid-cols-7 moveLeft">
+    <div class="w-full border grid grid-cols-7">
       <Top />
       <div
         v-for="day in daysOfTheWeek"
@@ -47,6 +47,7 @@
 
           <div
             class="mt-2 w-full px-2 py-1 flex space-x-2 items-center whitespace-nowrap overflow-hidden hover:text-gray-800 hover:font-medium cursor-pointer rounded-sm"
+            @click="openModal(day)"
           >
             <div class="w-1/12">
               <svg
@@ -60,7 +61,7 @@
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                  d="M12 6v12m6-6H6"
                 />
               </svg>
             </div>
@@ -72,6 +73,17 @@
               </h6>
             </div>
           </div>
+
+          <!-- use the modal component -->
+          <transition name="modal">
+            <Modal
+              v-if="modalShow"
+              @close-modal="closeModal"
+              :day="modalDay"
+              :month="calendarStore.getMonth"
+              :year="calendarStore.getYear"
+            />
+          </transition>
         </div>
       </div>
     </div>
@@ -81,16 +93,14 @@
 <script setup>
 import { ref, onMounted, onUpdated } from "vue";
 import Top from "@/components/Top.vue";
+import Modal from "@/components/EventsModal.vue";
 import { useCalendarStore } from "../stores/calendar";
-
-const willUpdate = ref(false);
 
 // Store initialization and subscription
 const calendarStore = useCalendarStore();
 calendarStore.$subscribe((mutation, state) => {
   getDaysInMonth();
   getFirstDayOfMonth();
-  willUpdate.value = true;
 });
 
 // component variables
@@ -105,6 +115,8 @@ const daysOfTheWeek = {
 };
 const daysInCurrentMonth = ref(0);
 const firstDayOfCurrentMonth = ref(0);
+const modalShow = ref(false);
+const modalDay = ref(0);
 
 /**
  * Gets the number of days present in a month
@@ -148,6 +160,16 @@ const isToday = (day) => {
   return false;
 };
 
+const openModal = (day) => {
+  modalShow.value = true;
+  modalDay.value = day;
+};
+
+const closeModal = () => {
+  modalShow.value = false;
+  modalDay.value = 0;
+};
+
 /************************************************************************
  *  LIFECYCLE HOOKS
  * **********************************************************************
@@ -156,15 +178,17 @@ onMounted(() => {
   getDaysInMonth();
   getFirstDayOfMonth();
 });
-
-onUpdated(() => {
-  willUpdate.value = false;
-});
 </script>
 
 <style scoped>
-.moveLeft {
-  transition: left 0.3s ease-in-out;
-  -webkit-transition: left 0.3s ease-in-out;
+.modal-enter-active,
+.modal-leave-active {
+  transition: translate 0.5s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  /** opacity: 0; **/
+  translate: 0px 100%;
 }
 </style>

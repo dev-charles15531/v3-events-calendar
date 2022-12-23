@@ -20,7 +20,8 @@
     "@vueuse/components": "^9.7.0",
     "@vueuse/core": "^9.7.0",
     "pinia": "^2.0.28",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "vue3-popper": "^1.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
