@@ -66,6 +66,7 @@
             <div class="w-full mt-5">
               <div
                 v-for="i in 6"
+                @click="togglePopover"
                 class="w-full px-1 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer rounded hover:shadow-md hover:bg-slate-300 transition-colors"
               >
                 <div class="w-2/6 md:w-1/6">
@@ -128,11 +129,21 @@
         </slot>
       </div>
     </div>
+
+    <!-- popover component  -->
+    <div
+      ref="popoverRef"
+      :class="{ hidden: !popoverShow, block: popoverShow }"
+      class="bg-gray-100 border mb-3 block z-50 max-w-xs rounded-lg p-5 shadow-md"
+    >
+      <slot name="eventDialog"></slot>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, computed } from "vue";
+import { usePopover } from "../composables/popover";
 
 /**************************************
  * PROPS
@@ -161,18 +172,25 @@ const modalWeekDay = computed(() =>
 const modalShortMonth = computed(() =>
   new Intl.DateTimeFormat("en-US", { month: "short" }).format(modalDate.value)
 );
-// const modal
+const popoverRef = ref(null);
 
+// popover composable
+const { popoverShow, togglePopover } = usePopover(popoverRef);
+
+/**
+ * Format date from year, month and day prop
+ */
 const getDisplayDate = () => {
   modalDate.value = new Date(props.year, props.month, props.day);
 };
-const getTodaysDate = computed(() =>
-  new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date())
-);
+
+// const getTodaysDate = computed(() =>
+//   new Intl.DateTimeFormat("en-US", {
+//     day: "numeric",
+//     month: "short",
+//     year: "numeric",
+//   }).format(new Date())
+// );
 
 /************************************************************************
  *  LIFECYCLE HOOKS

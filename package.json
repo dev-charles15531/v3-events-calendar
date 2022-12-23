@@ -16,12 +16,12 @@
     "test:unit": "vitest --environment jsdom --root src/"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
     "@vuepic/vue-datepicker": "^3.6.3",
     "@vueuse/components": "^9.7.0",
     "@vueuse/core": "^9.7.0",
     "pinia": "^2.0.28",
-    "vue": "^3.2.45",
-    "vue3-popper": "^1.5.0"
+    "vue": "^3.2.45"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",

@@ -33,6 +33,7 @@
           <div v-for="j in 3">
             <div
               class="w-full px-2 py-1 flex space-x-1 items-center whitespace-nowrap overflow-hidden hover:border hover:border-gray-200 cursor-pointer rounded-sm"
+              @click="togglePopover"
             >
               <div class="w-1/12">
                 <div class="h-2 w-2 rounded-full bg-green-300"></div>
@@ -73,28 +74,38 @@
               </h6>
             </div>
           </div>
-
-          <!-- use the modal component -->
-          <transition name="modal">
-            <Modal
-              v-if="modalShow"
-              @close-modal="closeModal"
-              :day="modalDay"
-              :month="calendarStore.getMonth"
-              :year="calendarStore.getYear"
-            />
-          </transition>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- use the modal component -->
+  <transition name="modal">
+    <Modal
+      v-if="modalShow"
+      @close-modal="closeModal"
+      :day="modalDay"
+      :month="calendarStore.getMonth"
+      :year="calendarStore.getYear"
+    />
+  </transition>
+
+  <!-- popover component  -->
+  <div
+    ref="popoverRef"
+    :class="{ hidden: !popoverShow, block: popoverShow }"
+    class="bg-gray-100 border mb-3 block z-50 max-w-xs rounded-lg p-5 shadow-md"
+  >
+    <slot name="eventDialog"></slot>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUpdated } from "vue";
+import { ref, onMounted } from "vue";
 import Top from "@/components/Top.vue";
 import Modal from "@/components/EventsModal.vue";
 import { useCalendarStore } from "../stores/calendar";
+import { usePopover } from "../composables/popover";
 
 // Store initialization and subscription
 const calendarStore = useCalendarStore();
@@ -117,6 +128,10 @@ const daysInCurrentMonth = ref(0);
 const firstDayOfCurrentMonth = ref(0);
 const modalShow = ref(false);
 const modalDay = ref(0);
+const popoverRef = ref(null);
+
+// popover composable
+const { popoverShow, togglePopover } = usePopover(popoverRef);
 
 /**
  * Gets the number of days present in a month
@@ -161,6 +176,7 @@ const isToday = (day) => {
 };
 
 const openModal = (day) => {
+  popoverShow.value = false; // close any open popover before opening modal
   modalShow.value = true;
   modalDay.value = day;
 };
