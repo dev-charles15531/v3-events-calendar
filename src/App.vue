@@ -87,7 +87,7 @@ const events = ref([
         </h3>
       </div>
 
-      <div class="w-full mt-5 px-4">
+      <div class="w-full mt-5 px-2 md:px-4">
         <Calendar :events="events">
           <template #eventDialog="props">
             <div

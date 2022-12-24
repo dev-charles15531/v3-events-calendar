@@ -13,16 +13,16 @@
         v-if="firstDayOfCurrentMonth > 0"
         v-for="day in firstDayOfCurrentMonth"
         :key="day"
-        class="h-36 w-full border opacity-50"
+        class="h-16 md:h-36 w-full border opacity-50"
       ></div>
 
       <div
         v-for="day in daysInCurrentMonth"
         :key="day"
-        class="h-36 w-full border align-top"
+        class="h-16 md:h-36 w-full border align-top"
       >
         <div
-          class="w-full h-full text-center transition-colors"
+          class="w-full h-full text-xs md:text-sm lg:text-base text-center transition-colors"
           :class="{
             'bg-slate-200 text-gray-600 font-medium': isToday(day),
             'hover:bg-gray-100 hover:text-gray-700': !isToday(day),
@@ -33,13 +33,14 @@
           <div
             v-if="maxThreeTodaysEvent(day, events).length"
             v-for="evt in maxThreeTodaysEvent(day, events)"
+            class="hidden md:block"
           >
             <div
               class="w-full px-2 py-1 flex space-x-1 items-center whitespace-nowrap overflow-hidden hover:border hover:border-gray-200 cursor-pointer rounded-sm"
               @click="togglePopover($event, evt)"
             >
               <div class="w-1/12">
-                <div class="h-2 w-2 rounded-full bg-green-500"></div>
+                <div class="h-2 w-2 rounded-full bg-purple-600"></div>
               </div>
               <div class="w-11/12">
                 <h5 class="text-xs tracking-tight text-clip overflow-hidden">
@@ -51,7 +52,7 @@
 
           <div
             v-if="allTodaysEvent(day, events).length > 3"
-            class="mt-2 w-full px-2 py-1 flex space-x-2 items-center whitespace-nowrap overflow-hidden hover:text-gray-800 hover:font-medium cursor-pointer rounded-sm"
+            class="hidden md:flex mt-2 w-full px-2 py-1 space-x-2 items-center whitespace-nowrap overflow-hidden hover:text-gray-800 hover:font-medium cursor-pointer rounded-sm"
             @click="openModal(day, allTodaysEvent(day, events))"
           >
             <div class="w-1/12">
@@ -76,6 +77,20 @@
               >
                 {{ allTodaysEvent(day, events).length - 3 + " more events" }}
               </h6>
+            </div>
+          </div>
+
+          <div
+            v-if="allTodaysEvent(day, events).length > 0"
+            class="flex md:hidden h-2/3 w-full justify-center items-center"
+            @click="openModal(day, allTodaysEvent(day, events))"
+          >
+            <div
+              class="h-6 w-6 flex justify-center items-center text-xs bg-purple-600 rounded-full shadow-sm"
+            >
+              <h3 class="font-medium text-white">
+                {{ allTodaysEvent(day, events).length }}
+              </h3>
             </div>
           </div>
         </div>
