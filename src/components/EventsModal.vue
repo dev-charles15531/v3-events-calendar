@@ -59,21 +59,27 @@
                 </svg>
               </div>
               <div>
-                <h5 class="text-xs md:text-sm text-left">5 Total Events</h5>
+                <h5 class="text-xs md:text-sm text-left">
+                  {{ events.length + " Total Events" }}
+                </h5>
               </div>
             </div>
 
             <div class="w-full mt-5">
               <div
-                v-for="i in 6"
-                @click="togglePopover"
+                v-for="event in events"
+                @click="eventClick($event, event)"
                 class="w-full px-1 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer rounded hover:shadow-md hover:bg-slate-300 transition-colors"
               >
                 <div class="w-2/6 md:w-1/6">
                   <h2 class="text-xl md:text-2xl font-medium">
-                    <span>5:00</span>
+                    <span>{{
+                      formatTime(event.time.start).substring(0, 5)
+                    }}</span>
                     <!-- <br class="md:hidden" /> -->
-                    <span class="text-xs">AM</span>
+                    <span class="text-xs uppercase">{{
+                      formatTime(event.time.start).slice(-2)
+                    }}</span>
                   </h2>
                 </div>
                 <div
@@ -83,12 +89,13 @@
                     <p
                       class="tracking-tight text-clip text-left overflow-hidden text-sm md:text-base font-medium pl-2 whitespace-nowrap"
                     >
-                      The Quick Brown Fox Jumps Over A Lazy Dog
+                      {{ event.title }}
                     </p>
                   </div>
                   <div>
-                    <h5 class="text-left text-xs md:text-base pl-2">
-                      5:00AM - 6:00AM
+                    <h5 class="text-left text-xs md:text-base pl-2 uppercase">
+                      {{ formatTime(event.time.start) }} -
+                      {{ formatTime(event.time.end) }}
                     </h5>
                   </div>
                 </div>
@@ -129,21 +136,11 @@
         </slot>
       </div>
     </div>
-
-    <!-- popover component  -->
-    <div
-      ref="popoverRef"
-      :class="{ hidden: !popoverShow, block: popoverShow }"
-      class="bg-gray-100 border mb-3 block z-50 max-w-xs rounded-lg p-5 shadow-md"
-    >
-      <slot name="eventDialog"></slot>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import { usePopover } from "../composables/popover";
 
 /**************************************
  * PROPS
@@ -162,7 +159,20 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  events: {
+    type: Object,
+    required: true,
+  },
 });
+
+/**************************************
+ * EMITS
+ * ************************************
+ */
+const emit = defineEmits(["togglePopover"]);
+const eventClick = (evt, event) => {
+  emit("togglePopover", evt, event);
+};
 
 // Component state
 const modalDate = ref(new Date());
@@ -172,10 +182,6 @@ const modalWeekDay = computed(() =>
 const modalShortMonth = computed(() =>
   new Intl.DateTimeFormat("en-US", { month: "short" }).format(modalDate.value)
 );
-const popoverRef = ref(null);
-
-// popover composable
-const { popoverShow, togglePopover } = usePopover(popoverRef);
 
 /**
  * Format date from year, month and day prop
@@ -191,6 +197,13 @@ const getDisplayDate = () => {
 //     year: "numeric",
 //   }).format(new Date())
 // );
+
+const formatTime = (timeStr) => {
+  let rearrangedTimeStr = timeStr.replace(" ", "T");
+
+  let constructedTime = new Date(rearrangedTimeStr + ":00");
+  return constructedTime.toLocaleTimeString();
+};
 
 /************************************************************************
  *  LIFECYCLE HOOKS
