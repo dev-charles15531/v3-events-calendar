@@ -10,11 +10,11 @@ const events = ref([
     title: "Event Name 1",
     time: { start: "2022-12-16 12:05", end: "2022-05-16 13:35" },
     description:
-      "lorem ygwgi ehuxhuhwe weggesgi hxisggxwg7hwehuhew whgdhuwdhuxh ewu hg7exhguwgxtx xtwxtx xfty xwqfx xxf x  x ",
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
   },
   {
     id: "2",
-    title: "Event Name 2 jyjj jjuiomnhj uj",
+    title: "Event Name 2 #Retouch",
     time: { start: "2022-12-26 12:05", end: "2022-05-16 13:35" },
     color: "yellow",
     isEditable: true,
@@ -79,30 +79,24 @@ const events = ref([
 </script>
 
 <template>
-  <div class="h-full w-full flex items-center justify-center">
-    <div class="w-full h-full">
-      <div class="w-full">
-        <h3 class="w-full text-lg text-center font-extrabold text-green-400">
-          Hello Vue + tailwind
-        </h3>
-      </div>
-
+  <div class="h-screen w-screen flex items-center justify-center">
+    <div class="w-10/12 h-full">
       <div class="w-full mt-5 px-2 md:px-4">
         <Calendar :events="events">
           <template #eventDialog="props">
             <div
               v-if="props.eventDialogData && props.eventDialogData.title"
-              class="p-4 flex justify-center bg-[#1A202C] rounded-md"
+              class="p-4 flex justify-center bg-gray-200 border border-gray-400 rounded-md"
             >
               <div>
                 <div
-                  class="text-sm md:text-base font-bold text-gray-200 text-center"
+                  class="text-sm md:text-base font-bold text-gray-700 text-center"
                 >
                   {{ props.eventDialogData.title }}
                 </div>
 
                 <div class="mt-5">
-                  <div class="text-xs text-gray-300 space-y-2">
+                  <div class="text-xs text-gray-700 space-y-2">
                     <!-- your time -->
                     <h6 class="flex items-center space-x-2">
                       <svg
@@ -169,11 +163,11 @@ const events = ref([
                         />
                       </svg>
                       <span class="font-medium italic"
-                        >{{ props.eventDialogData.tags }}
+                        >#Hot, #NoSec, #Dusk2Dawn
                       </span>
                     </h6>
 
-                    <!-- blockchain -->
+                    <!-- Location -->
                     <h6 class="flex items-center space-x-2">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -190,9 +184,7 @@ const events = ref([
                         />
                       </svg>
 
-                      <span class="font-medium uppercase"
-                        >{{ props.eventDialogData.blockchain }}
-                      </span>
+                      <span class="font-medium uppercase">At the base </span>
                     </h6>
                   </div>
 
@@ -211,7 +203,7 @@ const events = ref([
                     />
                   </div>
 
-                  <div class="w-full text-xs font-medium text-gray-300 mt-5">
+                  <div class="w-full text-xs font-medium text-gray-700 mt-5">
                     {{ props.eventDialogData.description }}
                   </div>
 
@@ -238,7 +230,7 @@ const events = ref([
                         <span>close</span>
                       </button>
                       <a
-                        :href="'/calendar/launch/'"
+                        href="#"
                         class="bg-purple-600 rounded-md py-1 md:py-2 px-5 hover:px-6 shadow-md hover:bg-purple-700 transition-all"
                       >
                         <span class="text-xs md:text-sm font-medium text-white"
@@ -249,10 +241,6 @@ const events = ref([
                   </div>
                 </div>
               </div>
-
-              <!-- <button class="close-flyout" @click="props.closeEventDialog">
-          Finished!
-        </button> -->
             </div>
           </template>
         </Calendar>

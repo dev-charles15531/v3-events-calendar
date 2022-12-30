@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 grid place-items-center z-50">
     <div
-      class="modal-container bg-gray-100 w-4/5 h-4/6 rounded-xl shadow-sm border overflow-y-hidden"
+      class="modal-container bg-gray-100 w-4/5 h-4/6 lg:h-5/6 rounded-xl shadow-sm border overflow-y-hidden"
     >
       <div class="modal-header w-full h-[14%]">
         <slot name="header">
@@ -69,7 +69,7 @@
               <div
                 v-for="event in events"
                 @click="eventClick($event, event)"
-                class="w-full px-1 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer rounded hover:shadow-md hover:bg-slate-300 transition-colors"
+                class="w-full px-1 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer border lg:border-none rounded hover:shadow-md hover:bg-slate-300 transition-colors"
               >
                 <div class="w-2/6 md:w-1/6">
                   <h2 class="text-xl md:text-2xl font-medium">
@@ -198,6 +198,12 @@ const getDisplayDate = () => {
 //   }).format(new Date())
 // );
 
+/**
+ * Re-format given time string
+ * @param {string} timeStr The time string to reformat
+ *
+ * @return The formatted time string
+ */
 const formatTime = (timeStr) => {
   let rearrangedTimeStr = timeStr.replace(" ", "T");
 

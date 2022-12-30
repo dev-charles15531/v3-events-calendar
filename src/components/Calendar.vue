@@ -95,6 +95,51 @@
           </div>
         </div>
       </div>
+
+      <div
+        v-if="lastEmptyCells > 0"
+        v-for="day in lastEmptyCells"
+        :key="day"
+        class="h-16 md:h-36 w-full border opacity-50"
+      ></div>
+
+      <!-- mobile navigation -->
+      <div class="md:hidden col-span-7 flex justify-between items-center p-2">
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 hover:text-gray-500 cursor-pointer hover:h-6 hover:w-6 transition-all"
+            @click="calendarStore.decrementMonth(1)"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"
+            />
+          </svg>
+        </div>
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 hover:text-gray-500 cursor-pointer hover:h-6 hover:w-6 transition-all"
+            @click="calendarStore.incrementMonth(1)"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -115,7 +160,7 @@
   <div
     ref="popoverRef"
     :class="{ hidden: !popoverShow, block: popoverShow }"
-    class="bg-gray-100 border mb-3 block z-50 max-w-xs rounded-lg shadow-md"
+    class="bg-gray-100 mb-3 block z-50 max-w-xs rounded-lg shadow-md"
   >
     <slot
       name="eventDialog"
@@ -126,7 +171,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUpdated } from "vue";
 import Top from "@/components/Top.vue";
 import Modal from "@/components/EventsModal.vue";
 import { useCalendarStore } from "../stores/calendar";
@@ -162,6 +207,7 @@ const daysOfTheWeek = {
 };
 const daysInCurrentMonth = ref(0);
 const firstDayOfCurrentMonth = ref(0);
+const lastEmptyCells = ref(0);
 const modalShow = ref(false);
 const modalDay = ref(0);
 const popoverRef = ref(null);
@@ -172,7 +218,7 @@ const { popoverShow, todaysEvent, togglePopover } = usePopover(popoverRef);
 
 /**
  * Gets the number of days present in a month
- * The month is gottenn from the calendar store
+ * The month is gotten from the calendar store
  */
 const getDaysInMonth = () => {
   daysInCurrentMonth.value = new Date(
@@ -192,6 +238,16 @@ const getFirstDayOfMonth = () => {
     calendarStore.getMonth,
     1
   ).getDay();
+};
+
+/**
+ * Gets the last empty cells (if any) on the calendar grid
+ */
+const lastCalendarCells = () => {
+  let totalGrid = firstDayOfCurrentMonth.value <= 5 ? 35 : 42;
+
+  lastEmptyCells.value =
+    totalGrid - daysInCurrentMonth.value - firstDayOfCurrentMonth.value;
 };
 
 /**
@@ -230,6 +286,15 @@ const isEventToday = (day, startdate) => {
   return false;
 };
 
+/**
+ * Gets at most, 3 calendar events on a given day
+ * This events are displayed on the calendar grid (>= Large screens)
+ *
+ * @param {number} day calendar month day whose event(s) we're getting
+ * @param {array} events Array of events objects to filter through
+ *
+ * @return array Array of the filtered day's event(s)
+ */
 const maxThreeTodaysEvent = (day, events) => {
   if (!events.length) return [];
 
@@ -246,6 +311,14 @@ const maxThreeTodaysEvent = (day, events) => {
   return threeTodaysEventArr;
 };
 
+/**
+ * Gets all the calendar events on a given day
+ *
+ * @param {number} day calendar month day whose event(s) we're getting
+ * @param {array} events Array of events objects to filter through
+ *
+ * @return array Array of the filtered day's event(s)
+ */
 const allTodaysEvent = (day, events) => {
   if (!events.length) return [];
 
@@ -261,12 +334,17 @@ const allTodaysEvent = (day, events) => {
 
 /**
  * Open the event details modal
+ *
+ * @param {number} day current calendar month day
+ * @param {array} events Array of events objects to show on the modal
+ *
+ * @return null
  */
 const openModal = (day, events) => {
   popoverShow.value = false; // close any open popover before opening modal
   modalEvents.value = events;
-  modalShow.value = true;
   modalDay.value = day;
+  modalShow.value = true;
 };
 
 /**
@@ -285,6 +363,12 @@ const closeModal = () => {
 onMounted(() => {
   getDaysInMonth();
   getFirstDayOfMonth();
+  lastCalendarCells();
+});
+
+onUpdated(() => {
+  getFirstDayOfMonth();
+  lastCalendarCells();
 });
 </script>
 
