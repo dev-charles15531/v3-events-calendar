@@ -6,74 +6,135 @@ import Calendar from "./components/Calendar.vue";
 const events = ref([
   {
     id: 1,
-    uri: "event uri",
-    title: "Event Name 1",
-    time: { start: "2022-12-16 12:05", end: "2022-05-16 13:35" },
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 1",
+    time: { start: "2022-01-01 12:00", end: "2022-01-01 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
   {
-    id: "2",
-    title: "Event Name 2 #Retouch",
-    time: { start: "2022-12-26 12:05", end: "2022-05-16 13:35" },
-    color: "yellow",
-    isEditable: true,
+    id: 2,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 2",
+    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
   {
-    id: "3",
-    title: "Event Name 3",
-    time: { start: "2022-12-26 12:05", end: "2022-05-16 13:35" },
-    color: "yellow",
-    isEditable: true,
+    id: 3,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 3",
+    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
   {
-    id: "4",
-    title: "Event Name 4",
-    time: { start: "2022-12-26 12:05", end: "2022-05-16 13:35" },
-    color: "yellow",
-    isEditable: true,
+    id: 4,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 4",
+    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
   {
-    id: "5",
-    title: "Event Name 5",
-    time: { start: "2022-12-26 12:05", end: "2022-05-16 13:35" },
-    color: "yellow",
-    isEditable: true,
+    id: 5,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 5",
+    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
   {
-    id: "6",
-    title: "Event Name 6",
-    time: { start: "2022-12-06 12:05", end: "2022-05-16 13:35" },
-    color: "yellow",
-    isEditable: true,
+    id: 6,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 6",
+    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
   {
-    id: "7",
-    title: "Event Name 7",
-    time: { start: "2022-12-16 12:05", end: "2022-05-16 13:35" },
-    color: "yellow",
-    isEditable: true,
+    id: 7,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 7",
+    time: { start: "2023-01-06 12:00", end: "2023-01-06 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
   {
-    id: "8",
-    title: "Event Name 8",
-    time: { start: "2022-12-16 12:05", end: "2022-05-16 13:35" },
-    color: "yellow",
-    isEditable: true,
+    id: 8,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 8",
+    time: { start: "2023-01-19 12:00", end: "2023-01-19 14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
+  },
+  {
+    id: 9,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 9",
+    time: { start: "2023-01-19 12:00", end: "2023-01-19 14:00" },
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
+  },
+  {
+    id: 10,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 10",
+    time: { start: "2023-01-15 12:00", end: "2023-01-15 14:00" },
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
+  },
+  {
+    id: 11,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 11",
+    time: { start: "2023-01-15 12:00", end: "2023-01-15 14:00" },
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
+  },
+  {
+    id: 12,
+    url: "https://github.com/dev-charles15531",
+    title: "Dummy Event Name 12",
+    time: { start: "2023-01-02 12:00", end: "2023-01-02 14:00" },
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
+    image: "test-img.png",
+    tags: "#fun #nightout #dance #veterantime",
+    location: "At the base",
   },
 ]);
 </script>
@@ -163,7 +224,7 @@ const events = ref([
                         />
                       </svg>
                       <span class="font-medium italic"
-                        >#Hot, #NoSec, #Dusk2Dawn
+                        >{{ props.eventDialogData.tags }}
                       </span>
                     </h6>
 
@@ -184,7 +245,9 @@ const events = ref([
                         />
                       </svg>
 
-                      <span class="font-medium uppercase">At the base </span>
+                      <span class="font-medium uppercase">{{
+                        props.eventDialogData.location
+                      }}</span>
                     </h6>
                   </div>
 
@@ -193,11 +256,7 @@ const events = ref([
                     class="w-full flex justify-center mt-5"
                   >
                     <img
-                      :src="
-                        assetUrl +
-                        '/project-event-images/' +
-                        props.eventDialogData.image
-                      "
+                      :src="'../public/' + props.eventDialogData.image"
                       alt="launch image"
                       class="rounded-full h-36 w-36"
                     />
@@ -230,7 +289,7 @@ const events = ref([
                         <span>close</span>
                       </button>
                       <a
-                        href="#"
+                        :href="props.eventDialogData.url"
                         class="bg-purple-600 rounded-md py-1 md:py-2 px-5 hover:px-6 shadow-md hover:bg-purple-700 transition-all"
                       >
                         <span class="text-xs md:text-sm font-medium text-white"
