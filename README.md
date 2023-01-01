@@ -60,6 +60,6 @@ If you find a bug, kindly open an issue [here](https://github.com/dev-charles155
 - [Popper js](https://popper.js.org/) - TOOLTIP & POPOVER POSITIONING ENGINE.
 - [Vue Datepicker](https://pinia.vuejs.org/) - The most complete datepicker solution for Vue 3.
 
-## [License](https://github.com/dev-charles15531/v3-events-calendar/blob/main/LICENSE.md)
+## [License](https://github.com/dev-charles15531/v3-events-calendar/blob/main/LICENSE)
 
 MIT © [ Charles Paul ](https://github.com/dev-charles15531)
