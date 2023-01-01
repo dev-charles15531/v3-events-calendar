@@ -1,4 +1,4 @@
-# ![Main Screenshot](https://dev-charles15531/v3-events-calendar/blob/main/public/ss1.png)
+# ![Main Screenshot](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss1.png)
 
 # Events Calendar
 
@@ -24,15 +24,15 @@ Currently it is responsive on mobile and desktop screens.
 
 ### Desktop View
 
-![](https://dev-charles15531/v3-events-calendar/blob/main/public/ss1.png)
-![](https://dev-charles15531/v3-events-calendar/blob/main/public/ss2.png)
-![](https://dev-charles15531/v3-events-calendar/blob/main/public/ss3.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss1.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss2.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss3.png)
 
 ### Mobile View
 
-![](https://dev-charles15531/v3-events-calendar/blob/main/public/ss4.png)
-![](https://dev-charles15531/v3-events-calendar/blob/main/public/ss5.png)
-![](https://dev-charles15531/v3-events-calendar/blob/main/public/ss6.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss4.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss5.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss6.png)
 
 ## Contributing
 
@@ -50,7 +50,7 @@ To fix a bug or enhance an existing module, follow these steps:
 
 ### Bug
 
-If you find a bug, kindly open an issue [here](https://dev-charles15531/v3-events-calendar/issues/new) by describing the error faced with
+If you find a bug, kindly open an issue [here](https://github.com/dev-charles15531/v3-events-calendar/issues/new) by describing the error faced with
 
 ## Built with
 
