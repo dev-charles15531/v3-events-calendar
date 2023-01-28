@@ -16,7 +16,7 @@
 
 Here are a working live demo :
 
-https://theauroracommunity.io/
+https://calenditude.com/
 
 ## Screenshots
 
