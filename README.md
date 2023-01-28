@@ -1,6 +1,4 @@
-# ![Main Screenshot](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss1.png)
-
-# Events Calendar
+# Vue 3 Events Calendar
 
 <table>
 <tr>
