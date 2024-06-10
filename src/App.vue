@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import Calendar from "./components/Calendar.vue";
+import V3Calendar from "./components/V3Calendar.vue";
 
 // all events data
 const events = ref([
@@ -8,7 +9,7 @@ const events = ref([
     id: 1,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 1",
-    time: { start: "2022-01-01 12:00", end: "2022-01-01 14:00" },
+    time: { start: "2023-01-01T12:00", end: "2023-01-01T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -19,7 +20,7 @@ const events = ref([
     id: 2,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 2",
-    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
+    time: { start: "2024-06-11T02:00", end: "2024-06-11T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -30,18 +31,19 @@ const events = ref([
     id: 3,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 3",
-    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
+    time: { start: "2024-06-11T12:00", end: "2024-06-11T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
     tags: "#fun #nightout #dance #veterantime",
     location: "At the base",
+    background: "teal",
   },
   {
     id: 4,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 4",
-    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
+    time: { start: "2024-06-11T12:00", end: "2024-06-11T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -52,7 +54,7 @@ const events = ref([
     id: 5,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 5",
-    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
+    time: { start: "2024-06-11T12:00", end: "2024-06-11T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -63,7 +65,7 @@ const events = ref([
     id: 6,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 6",
-    time: { start: "2023-01-11 12:00", end: "2023-01-11 14:00" },
+    time: { start: "2024-06-11T12:00", end: "2024-06-11T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -74,7 +76,7 @@ const events = ref([
     id: 7,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 7",
-    time: { start: "2023-01-06 12:00", end: "2023-01-06 14:00" },
+    time: { start: "2024-06-06T12:00", end: "2024-06-06T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -85,7 +87,7 @@ const events = ref([
     id: 8,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 8",
-    time: { start: "2023-01-19 12:00", end: "2023-01-19 14:00" },
+    time: { start: "2024-06-19T12:00", end: "2024-06-19T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -96,7 +98,7 @@ const events = ref([
     id: 9,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 9",
-    time: { start: "2023-01-19 12:00", end: "2023-01-19 14:00" },
+    time: { start: "2024-06-19T12:00", end: "2024-06-19T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -107,7 +109,7 @@ const events = ref([
     id: 10,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 10",
-    time: { start: "2023-01-15 12:00", end: "2023-01-15 14:00" },
+    time: { start: "2024-06-15T12:00", end: "2024-06-15T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -118,7 +120,7 @@ const events = ref([
     id: 11,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 11",
-    time: { start: "2023-01-15 12:00", end: "2023-01-15 14:00" },
+    time: { start: "2024-06-15T12:00", end: "2024-06-15T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -129,7 +131,7 @@ const events = ref([
     id: 12,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 12",
-    time: { start: "2023-01-02 12:00", end: "2023-01-02 14:00" },
+    time: { start: "2024-06-02T12:00", end: "2024-06-02T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -137,17 +139,25 @@ const events = ref([
     location: "At the base",
   },
 ]);
+
+const here = () => {
+  console.log("yegygd");
+};
 </script>
 
 <template>
-  <div class="h-screen w-screen flex items-center justify-center">
-    <div class="w-10/12 h-full">
-      <div class="w-full mt-5 px-2 md:px-4">
-        <Calendar :events="events">
+  <div class="h-screen w-full flex flex-col items-center justify-center">
+    <div class="w-11/12 lg:w-9/12 h-full">
+      <div class="w-full h-full">
+        <!-- <Calendar :events="events">
+          
+        </Calendar> -->
+
+        <V3Calendar :events="events" :primary-color="'lime'" @addEvent="here()">
           <template #eventDialog="props">
             <div
               v-if="props.eventDialogData && props.eventDialogData.title"
-              class="p-4 flex justify-center bg-gray-200 border border-gray-400 rounded-md"
+              class="p-4 flex justify-center border border-gray-100 rounded-md"
             >
               <div>
                 <div
@@ -269,7 +279,7 @@ const events = ref([
                   <div class="w-full flex justify-center mt-6">
                     <div class="w-full flex items-center justify-between">
                       <button
-                        class="close-flyout flex items-center space-x-2 bg-gray-400 py-1 px-3 text-xs hover:text-sm rounded-md text-gray-700 transition-all"
+                        class="close-flyout flex items-center space-x-2 bg-gray-100 py-1 px-3 text-xs hover:text-sm rounded-md text-gray-700 transition-all"
                         @click="props.closeEventDialog"
                       >
                         <svg
@@ -302,7 +312,9 @@ const events = ref([
               </div>
             </div>
           </template>
-        </Calendar>
+        </V3Calendar>
+
+        <!-- <div class="h-20"></div> -->
       </div>
     </div>
   </div>

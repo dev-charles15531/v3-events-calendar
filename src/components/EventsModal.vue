@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 grid place-items-center z-50">
     <div
-      class="modal-container bg-gray-100 w-4/5 h-4/6 lg:h-5/6 rounded-xl shadow-sm border overflow-y-hidden"
+      class="modal-container bg-gray-50 w-4/5 sm:w-3/5 lg:w-3/6 xl:w-2/6 h-3/6 lg:h-4/6 rounded-xl shadow-sm border overflow-y-auto"
     >
       <div class="modal-header w-full h-[14%]">
         <slot name="header">
@@ -38,7 +38,7 @@
         </slot>
       </div>
 
-      <div class="modal-body h-[72%] overflow-y-scroll transition-none">
+      <div class="modal-body h-[72%] overflow-y-auto transition-none">
         <slot name="body">
           <div class="h-full w-full px-1 md:px-5">
             <div class="w-full flex space-x-2 items-center">
@@ -49,7 +49,7 @@
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="w-5 h-5 text-purple-600"
+                  :class="['w-5 h-5 text-' + primaryColor + '-600']"
                 >
                   <path
                     stroke-linecap="round"
@@ -69,10 +69,10 @@
               <div
                 v-for="event in events"
                 @click="eventClick($event, event)"
-                class="w-full px-1 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer border lg:border-none rounded hover:shadow-md hover:bg-slate-300 transition-colors"
+                class="w-full px-1 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer border lg:border-none rounded hover:shadow-md hover:bg-gray-100 transition-colors"
               >
-                <div class="w-2/6 md:w-1/6">
-                  <h2 class="text-xl md:text-2xl font-medium">
+                <div class="">
+                  <h2 class="text-lg md:text-xl text-gray-800 font-medium">
                     <span>{{
                       formatTime(event.time.start).substring(0, 5)
                     }}</span>
@@ -83,7 +83,11 @@
                   </h2>
                 </div>
                 <div
-                  class="w-4/6 md:w-5/6 border-l-4 border-purple-600 rounded overflow-x-hidden"
+                  :class="[
+                    'border-l-4 border-' +
+                      primaryColor +
+                      '-600 rounded overflow-x-hidden',
+                  ]"
                 >
                   <div class="w-full">
                     <p
@@ -93,7 +97,7 @@
                     </p>
                   </div>
                   <div>
-                    <h5 class="text-left text-xs md:text-base pl-2 uppercase">
+                    <h5 class="text-left text-xs md:text-sm pl-2 uppercase">
                       {{ formatTime(event.time.start) }} -
                       {{ formatTime(event.time.end) }}
                     </h5>
@@ -148,7 +152,7 @@ import { onMounted, ref, computed } from "vue";
  */
 const props = defineProps({
   day: {
-    type: Number,
+    type: [Number, String],
     required: true,
   },
   month: {
@@ -163,13 +167,17 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  primaryColor: {
+    type: String,
+    required: true,
+  },
 });
 
 /**************************************
  * EMITS
  * ************************************
  */
-const emit = defineEmits(["togglePopover"]);
+const emit = defineEmits(["togglePopover", "closeModal"]);
 const eventClick = (evt, event) => {
   emit("togglePopover", evt, event);
 };
@@ -205,9 +213,7 @@ const getDisplayDate = () => {
  * @return The formatted time string
  */
 const formatTime = (timeStr) => {
-  let rearrangedTimeStr = timeStr.replace(" ", "T");
-
-  let constructedTime = new Date(rearrangedTimeStr + ":00");
+  let constructedTime = new Date(timeStr);
   return constructedTime.toLocaleTimeString();
 };
 
