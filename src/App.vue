@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue";
-import Calendar from "./components/Calendar.vue";
 import V3Calendar from "./components/V3Calendar.vue";
 
 // all events data
@@ -139,21 +138,13 @@ const events = ref([
     location: "At the base",
   },
 ]);
-
-const here = () => {
-  console.log("yegygd");
-};
 </script>
 
 <template>
   <div class="h-screen w-full flex flex-col items-center justify-center">
     <div class="w-11/12 lg:w-9/12 h-full">
       <div class="w-full h-full">
-        <!-- <Calendar :events="events">
-          
-        </Calendar> -->
-
-        <V3Calendar :events="events" :primary-color="'lime'" @addEvent="here()">
+        <V3Calendar :events="events" :primary-color="'lime'">
           <template #eventDialog="props">
             <div
               v-if="props.eventDialogData && props.eventDialogData.title"
@@ -313,8 +304,6 @@ const here = () => {
             </div>
           </template>
         </V3Calendar>
-
-        <!-- <div class="h-20"></div> -->
       </div>
     </div>
   </div>
