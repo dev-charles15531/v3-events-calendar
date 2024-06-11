@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:flex lg:h-full lg:flex-col">
+  <div class="w-full h-full lg:flex lg:flex-col">
     <header
       class="flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none"
     >
@@ -176,7 +176,7 @@
             >
             <ol v-if="day.events.length > 0" class="mt-2">
               <li
-                v-for="(event, idx) in day.events.slice(0, 2)"
+                v-for="(event, idx) in day.events.slice(0, 3)"
                 :key="event.id"
               >
                 <h5
@@ -209,7 +209,7 @@
                   )
                 "
               >
-                + {{ day.events.length - 2 }} more
+                + {{ day.events.length - 3 }} more
               </li>
             </ol>
           </div>
@@ -223,7 +223,7 @@
               day.isCurrentMonth
                 ? 'bg-white text-gray-900'
                 : 'bg-gray-50 text-gray-400',
-              'flex h-14 flex-col px-3 py-2 hover:bg-gray-100 focus:z-10',
+              'flex h-14 w-full flex-col px-3 py-2 hover:bg-gray-100 focus:z-10',
             ]"
             @click="
               day.events.length > 0
@@ -237,21 +237,25 @@
             <time
               :datetime="day.date"
               :class="[
-                'flex flex-col h-6 w-6 items-center justify-center rounded-full',
+                'flex flex-col h-[1.35rem] w-[1.35rem] items-center justify-center rounded-full',
                 day.isToday ? 'bg-' + primaryColor + '-600 text-white' : '',
               ]"
               >{{ day.date.split("-").pop().replace(/^0/, "") }}</time
             >
             <span class="sr-only">{{ day.events.length }} events</span>
-            <h5 v-if="day.events.length > 0" class="flex flex-wrap">
+            <h5
+              v-if="day.events.length > 0"
+              class="w-full mt-1.5 flex justify-center flex-wrap"
+            >
               <span
-                v-for="event in day.events"
+                v-for="(event, index) in day.events"
                 :key="event.id"
                 :class="[
-                  'mr-1.5 mb-1 h-1.5 w-1.5 rounded-full bg-gray-400',
+                  'mb-1 h-1.5 w-1.5 rounded-full',
                   isEventBackground(event)
                     ? 'bg-' + event.background + '-500'
-                    : '',
+                    : 'bg-gray-400',
+                  (index + 1) % 2 > 0 ? 'mr-1' : '',
                 ]"
               />
             </h5>
@@ -325,7 +329,7 @@ import {
   EllipsisHorizontalIcon,
 } from "@heroicons/vue/20/solid";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import { ref, onBeforeMount, onMounted, onUpdated, watch } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { usePopover } from "../composables/popover";
@@ -557,4 +561,8 @@ onBeforeMount(() => {
   /** opacity: 0; **/
   translate: 0px 100%;
 }
+</style>
+
+<style>
+@import "@/assets/main.css";
 </style>
