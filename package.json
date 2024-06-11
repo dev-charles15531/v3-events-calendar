@@ -1,11 +1,11 @@
 {
-  "name": "oneday",
-  "version": "1.0.0",
+  "name": "v3-events-calendar",
+  "version": "0.1.0",
   "description": "description",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/dev-charles15531"
+    "url": "https://github.com/dev-charles15531/v3-events-calendar"
   },
   "author": "dev.charles15531@gmail.com",
   "license": "MIT",
