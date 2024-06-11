@@ -1,5 +1,6 @@
 import { ref } from "vue";
-import { createPopper } from "@popperjs/core";
+import { createPopper } from '@popperjs/core/lib/popper-lite.js';
+import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow.js';
 
 export function usePopover(popoverRef) {
   // state encapsulated and managed by the composable
@@ -16,7 +17,8 @@ export function usePopover(popoverRef) {
       todaysEvent.value = todaysEvt;
       popoverShow.value = true;
       createPopper(evt.target, popoverRef.value, {
-        placement: "top",
+        modifiers: [preventOverflow],
+        placement: "auto"
       });
       return;
     }
