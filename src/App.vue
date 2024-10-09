@@ -308,4 +308,3 @@ const events = ref([
     </div>
   </div>
 </template>
-./components/V3EventsCalendar.vue

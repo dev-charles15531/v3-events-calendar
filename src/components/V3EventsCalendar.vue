@@ -366,7 +366,19 @@ const now = new Date();
 const year = ref(now.getFullYear());
 const month = ref(now.getMonth());
 const day = ref(now.getDay());
-const today = now.toISOString().split("T")[0]; // Format the current date as YYYY-MM-DD
+
+const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+
+const today = formatDate(now).split("T")[0]; // Format the current date as YYYY-MM-DD
 const monthNames = [
   "January",
   "February",
@@ -385,7 +397,7 @@ const monthNames = [
 // popover composable
 const { popoverShow, todaysEvent, togglePopover } = usePopover(popoverRef);
 
-const getDaysInCurrentMonth = (now, year, month) => {
+const getDaysInCurrentMonth = (year, month) => {
   // Get the first day of the current month
   const firstDayOfMonth = new Date(year, month, 1);
   const firstDayOfWeek = firstDayOfMonth.getDay();
@@ -393,7 +405,7 @@ const getDaysInCurrentMonth = (now, year, month) => {
   // Get the last day of the current month
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const lastDateOfMonth = lastDayOfMonth.getDate();
-  const lastDayOfWeek = lastDayOfMonth.getDay();
+  const lastDayOfWeek = lastDayOfMonth.getDay() + 1;
 
   // Calculate the days to be included from the previous month
   const daysFromPrevMonth = firstDayOfWeek > 0 ? firstDayOfWeek : 7;
@@ -404,10 +416,10 @@ const getDaysInCurrentMonth = (now, year, month) => {
   for (let i = daysFromPrevMonth - 1; i >= 0; i--) {
     const date = new Date(year, month - 1, prevMonthLastDate - i);
     days.push({
-      date: date.toISOString().split("T")[0],
+      date: formatDate(date).split("T")[0],
       isCurrentMonth: false,
       events: [],
-      isToday: date.toISOString().split("T")[0] === today,
+      isToday: formatDate(date).split("T")[0] === today,
     });
   }
 
@@ -415,24 +427,24 @@ const getDaysInCurrentMonth = (now, year, month) => {
   for (let i = 1; i <= lastDateOfMonth; i++) {
     const date = new Date(year, month, i);
     days.push({
-      date: date.toISOString().split("T")[0],
+      date: formatDate(date).split("T")[0],
       isCurrentMonth: true,
       events: [],
-      isToday: date.toISOString().split("T")[0] === today,
+      isToday: formatDate(date).split("T")[0] === today,
     });
   }
 
   // Calculate the days to be included from the next month
-  const daysFromNextMonth = 6 - lastDayOfWeek;
+  const daysFromNextMonth = 7 - lastDayOfWeek;
 
   // Generate days for the next month
   for (let i = 1; i <= daysFromNextMonth; i++) {
     const date = new Date(year, month + 1, i);
     days.push({
-      date: date.toISOString().split("T")[0],
+      date: formatDate(date).split("T")[0],
       isCurrentMonth: false,
       events: [],
-      isToday: date.toISOString().split("T")[0] === today,
+      isToday: formatDate(date).split("T")[0] === today,
     });
   }
 
@@ -538,13 +550,13 @@ const isEventBackground = (event) => {
 };
 
 watch(month, (newMonth) => {
-  days.value = getDaysInCurrentMonth(now, year.value, newMonth);
+  days.value = getDaysInCurrentMonth(year.value, newMonth);
   initializeDatePicker(year.value, newMonth + 1, day.value);
   mapEventsToDays(days.value, props.events);
 });
 
 onBeforeMount(() => {
-  days.value = getDaysInCurrentMonth(now, year.value, month.value);
+  days.value = getDaysInCurrentMonth(year.value, month.value);
   initializeDatePicker(year.value, month.value + 1, day.value);
   mapEventsToDays(days.value, props.events);
 });
