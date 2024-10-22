@@ -80,7 +80,7 @@ const events = ref([
 ### Props
 
 | Prop              | Type    | Required | Default          | Description                                                        |
-| --------------    | ------- | -------- | ---------------- | ------------------------------------------------------------------ |
+| ----------------- | ------- | -------- | ---------------- | ------------------------------------------------------------------ |
 | `events`          | Array   | Yes      | -                | An array of event objects.                                         |
 | `timezone`        | String  | No       | America/New_York | Timezone you want calendar to use                                  |
 | `sundayStartWeek` | Boolean | No       | true             | If the calendar's first day of the week is Sunday or not.          |
