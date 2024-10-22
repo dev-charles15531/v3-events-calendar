@@ -200,7 +200,7 @@
                 </h5>
               </li>
               <li
-                v-if="day.events.length > 2"
+                v-if="day.events.length > 3"
                 class="text-gray-500 cursor-pointer"
                 @click="
                   openModal(
@@ -340,6 +340,11 @@ import Modal from "@/components/EventsModal.vue";
  * ************************************
  */
 const props = defineProps({
+  timezone: {
+    type: String,
+    required: false,
+    default: 'America/New_York',
+  },
   events: {
     type: Object,
     required: true,
@@ -356,16 +361,36 @@ const props = defineProps({
   },
 });
 
+// Function to get date in a specific timezone
+function getDateInTimeZone(date, timeZone) {
+    // Format the date using the specified timezone
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZone: timeZone,
+        hour12: false, // Optional: set to true for 12-hour format
+    };
+
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const formattedDate = formatter.format(date);
+    
+    return formattedDate;
+}
+
 const modalShow = ref(false);
 const modalDay = ref(0);
 const popoverRef = ref(null);
 const modalEvents = ref([]);
 const dpDate = ref(null); // Datepicker date
 const days = ref([]);
-const now = new Date();
-const year = ref(now.getFullYear());
-const month = ref(now.getMonth());
-const day = ref(now.getDay());
+const now = getDateInTimeZone(new Date(), props.timezone);
+const year = ref(new Date(now).getFullYear());
+const month = ref(new Date(now).getMonth());
+const day = ref(new Date(now).getDay());
 
 const formatDate = (date) => {
     const year = date.getFullYear();
@@ -378,7 +403,7 @@ const formatDate = (date) => {
 }
 
 
-const today = formatDate(now).split("T")[0]; // Format the current date as YYYY-MM-DD
+const today = formatDate(new Date(now)).split("T")[0]; // Format the current date as YYYY-MM-DD
 const monthNames = [
   "January",
   "February",

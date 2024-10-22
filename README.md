@@ -79,11 +79,12 @@ const events = ref([
 
 ### Props
 
-| Prop           | Type    | Required | Default | Description                                                        |
-| -------------- | ------- | -------- | ------- | ------------------------------------------------------------------ |
-| `events`       | Array   | Yes      | -       | An array of event objects.                                         |
-| `primaryColor` | String  | No       | indigo  | The primary color of the calendar. Must be one of the safe colors. |
-| `showAddBtn`   | Boolean | No       | true    | Show the 'Add event' button                                        |
+| Prop           | Type    | Required | Default          | Description                                                        |
+| -------------- | ------- | -------- | ---------------- | ------------------------------------------------------------------ |
+| `events`       | Array   | Yes      | -                | An array of event objects.                                         |
+| `timezone`     | String  | No       | America/New_York | Timezone you want calendar to use                                  |
+| `primaryColor` | String  | No       | indigo           | The primary color of the calendar. Must be one of the safe colors. |
+| `showAddBtn`   | Boolean | No       | true             | Show the 'Add event' button                                        |
 
 ### Event Object Format
 
