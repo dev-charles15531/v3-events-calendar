@@ -129,10 +129,13 @@
       <div
         class="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none"
       >
-        <div class="bg-white py-2">
+        <div v-if="sundayStartWeek" class="bg-white py-2">
           S<span class="sr-only sm:not-sr-only">un</span>
         </div>
-        <div class="bg-white py-2">
+        <div v-else class="bg-white py-2">
+          M<span class="sr-only sm:not-sr-only">on</span>
+        </div>
+        <div v-if="sundayStartWeek" class="bg-white py-2">
           M<span class="sr-only sm:not-sr-only">on</span>
         </div>
         <div class="bg-white py-2">
@@ -149,6 +152,9 @@
         </div>
         <div class="bg-white py-2">
           S<span class="sr-only sm:not-sr-only">at</span>
+        </div>
+        <div v-if="!sundayStartWeek" class="bg-white py-2">
+          S<span class="sr-only sm:not-sr-only">un</span>
         </div>
       </div>
       <div
@@ -359,6 +365,11 @@ const props = defineProps({
     required: false,
     default: true,
   },
+  sundayStartWeek: {
+    type: Boolean,
+    required: false,
+    default: false,
+  }
 });
 
 // Function to get date in a specific timezone
@@ -430,10 +441,18 @@ const getDaysInCurrentMonth = (year, month) => {
   // Get the last day of the current month
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const lastDateOfMonth = lastDayOfMonth.getDate();
-  const lastDayOfWeek = lastDayOfMonth.getDay() + 1;
-
+  var lastDayOfWeek = null;
+  
   // Calculate the days to be included from the previous month
-  const daysFromPrevMonth = firstDayOfWeek > 0 ? firstDayOfWeek : 7;
+  var daysFromPrevMonth = null;
+  if(props.sundayStartWeek) {
+    daysFromPrevMonth = firstDayOfWeek > 0 ? firstDayOfWeek : 7;
+    lastDayOfWeek = lastDayOfMonth.getDay() + 1;
+  }
+  else {
+    daysFromPrevMonth = (firstDayOfWeek === 0) ? 6 : firstDayOfWeek - 1;
+    lastDayOfWeek = lastDayOfMonth.getDay();
+  }
   const prevMonthLastDate = new Date(year, month, 0).getDate();
 
   // Generate days from the previous month
