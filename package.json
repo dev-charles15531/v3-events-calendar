@@ -2,6 +2,7 @@
   "name": "v3-events-calendar",
   "version": "1.0.3",
   "description": "Simple and customizable events calendar for vue 3",
+  "type": "module",
   "main": "./dist/v3-events-calendar.umd.js",
   "module": "./dist/v3-events-calendar.es.js",
   "files": [
@@ -30,15 +31,14 @@
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
     "@popperjs/core": "^2.11.8",
+    "@tailwindcss/vite": "^4.0.17",
     "@vuepic/vue-datepicker": "^11.0.2",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/test-utils": "^2.4.6",
-    "autoprefixer": "^10.4.21",
     "jsdom": "^26.0.0",
-    "postcss": "^8.5.3",
     "tailwindcss": "^4.0.17",
     "vite": "^6.2.3",
     "vitest": "^3.0.9"
