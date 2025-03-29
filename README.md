@@ -143,7 +143,7 @@ If you encounter any issues, please open an issue on our [GitHub Issues page](ht
 
 - [Vue 3](https://vuejs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [Popper.js](https://popper.js.org/)
+- [Floating UI](https://floating-ui.com/)
 - [Vue Datepicker](https://vue3datepicker.com/)
 
 ## License

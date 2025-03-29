@@ -1,21 +1,64 @@
+<script setup>
+import { computed } from "vue";
+import { format } from "date-fns-tz";
+
+const props = defineProps({
+  day: String,
+  events: Array,
+  primaryColor: String,
+  timezone: String,
+});
+
+/**************************************
+ * EMITS
+ * ************************************
+ */
+const emit = defineEmits(["togglePopover", "closeModal"]);
+const eventClick = (evt, event) => {
+  emit("togglePopover", evt.target, event);
+};
+
+// Computed date properties
+const modalWeekDay = computed(() =>
+  format(props.day, "EEEE", { timeZone: props.timezone })
+);
+const modalShortMonth = computed(() =>
+  format(props.day, "MMM", { timeZone: props.timezone })
+);
+const modalDayNumber = computed(() =>
+  format(props.day, "d", { timeZone: props.timezone })
+);
+
+// Format time with timezone
+const formatTime = (timeStr) => {
+  const date = new Date(timeStr);
+  return format(date, "p:mm a", {
+    timeZone: props.timezone,
+  });
+};
+</script>
+
 <template>
-  <div class="fixed inset-0 grid place-items-center z-50">
+  <div class="fixed inset-0 grid place-items-center z-30">
     <div
-      class="modal-container bg-gray-50 w-4/5 sm:w-3/5 lg:w-3/6 xl:w-2/6 h-3/6 lg:h-4/6 rounded-xl shadow-sm border overflow-y-auto"
+      class="modal-container bg-gray-50 w-4/5 sm:w-3/5 lg:w-3/6 xl:w-2/6 h-3/6 lg:h-4/6 rounded-xl shadow-sm border border-gray-300 overflow-y-auto"
     >
       <div class="modal-header w-full h-[14%]">
         <slot name="header">
           <div
-            class="w-full flex justify-between items-center border-b-2 py-2 md:py-3"
+            class="w-full flex justify-between items-center border-b-2 border-gray-200 py-2 md:py-3"
           >
             <div class="w-2/3 pl-4">
-              <h4 class="text-xl lg:text-2xl text-left font-semibold">
-                {{ modalWeekDay + " " + modalDate.getDate() }}
+              <h4
+                class="text-xl lg:text-2xl text-left font-semibold text-gray-800"
+              >
+                {{ modalWeekDay }} {{ modalDayNumber }}
                 <span class="font-medium text-sm lg:text-base">
-                  {{ modalShortMonth }}</span
-                >
+                  {{ modalShortMonth }}
+                </span>
               </h4>
             </div>
+
             <div class="w-1/3 pr-3" align="right">
               <div>
                 <svg
@@ -24,7 +67,7 @@
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="w-6 h-6"
+                  class="w-6 h-6 text-gray-700"
                 >
                   <path
                     stroke-linecap="round"
@@ -40,8 +83,8 @@
 
       <div class="modal-body h-[72%] overflow-y-auto transition-none">
         <slot name="body">
-          <div class="h-full w-full px-1 md:px-5">
-            <div class="w-full flex space-x-2 items-center">
+          <div class="md:px-5">
+            <div class="w-full pl-3 flex space-x-2 items-center">
               <div>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +92,7 @@
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  :class="['w-5 h-5 text-' + primaryColor + '-600']"
+                  :class="[`w-5 h-5 text-${primaryColor}-600`]"
                 >
                   <path
                     stroke-linecap="round"
@@ -68,25 +111,26 @@
             <div class="w-full mt-5">
               <div
                 v-for="event in events"
+                :key="event.id"
                 @click="eventClick($event, event)"
-                class="w-full px-1 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer border lg:border-none rounded hover:shadow-md hover:bg-gray-100 transition-colors"
+                class="w-full px-2 md:px-4 py-2 md:py-4 flex space-x-3 md:space-x-5 items-center cursor-pointer border lg:border-none border-gray-200 hover:shadow-md hover:bg-gray-100 transition-colors"
               >
+                <!-- Time display -->
                 <div class="">
                   <h2 class="text-lg md:text-xl text-gray-800 font-medium">
                     <span>{{
-                      formatTime(event.time.start).substring(0, 5)
+                      formatTime(event.time.start).split(" ")[0]
                     }}</span>
-                    <!-- <br class="md:hidden" /> -->
                     <span class="text-xs uppercase">{{
-                      formatTime(event.time.start).slice(-2)
+                      formatTime(event.time.start).split(" ")[1]
                     }}</span>
                   </h2>
                 </div>
+
+                <!-- Event details -->
                 <div
                   :class="[
-                    'border-l-4 border-' +
-                      primaryColor +
-                      '-600 rounded overflow-x-hidden',
+                    `border-l-4 border-${primaryColor}-600 rounded overflow-x-hidden`,
                   ]"
                 >
                   <div class="w-full">
@@ -109,6 +153,7 @@
         </slot>
       </div>
 
+      <!-- Footer -->
       <div
         class="modal-foooter w-full flex justify-center items-center h-[14%]"
       >
@@ -118,7 +163,7 @@
               <h3 class="text-sm md:text-base font-medium">close</h3>
             </div>
             <div
-              class="font-semibold hover:rotate-90 transition-all duration-700 cursor-pointer"
+              class="font-semibold hover:rotate-2 transition-all duration-700 cursor-pointer"
               @click="$emit('closeModal')"
             >
               <svg
@@ -127,7 +172,7 @@
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
                 stroke="currentColor"
-                class="w-6 h-6"
+                class="w-5 h-5"
               >
                 <path
                   stroke-linecap="round"
@@ -142,86 +187,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { onMounted, ref, computed } from "vue";
-
-/**************************************
- * PROPS
- * ************************************
- */
-const props = defineProps({
-  day: {
-    type: [Number, String],
-    required: true,
-  },
-  month: {
-    type: Number,
-    required: true,
-  },
-  year: {
-    type: Number,
-    required: true,
-  },
-  events: {
-    type: Object,
-    required: true,
-  },
-  primaryColor: {
-    type: String,
-    required: true,
-  },
-});
-
-/**************************************
- * EMITS
- * ************************************
- */
-const emit = defineEmits(["togglePopover", "closeModal"]);
-const eventClick = (evt, event) => {
-  emit("togglePopover", evt, event);
-};
-
-// Component state
-const modalDate = ref(new Date());
-const modalWeekDay = computed(() =>
-  new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(modalDate.value)
-);
-const modalShortMonth = computed(() =>
-  new Intl.DateTimeFormat("en-US", { month: "short" }).format(modalDate.value)
-);
-
-/**
- * Format date from year, month and day prop
- */
-const getDisplayDate = () => {
-  modalDate.value = new Date(props.year, props.month, props.day);
-};
-
-// const getTodaysDate = computed(() =>
-//   new Intl.DateTimeFormat("en-US", {
-//     day: "numeric",
-//     month: "short",
-//     year: "numeric",
-//   }).format(new Date())
-// );
-
-/**
- * Re-format given time string
- * @param {string} timeStr The time string to reformat
- *
- * @return The formatted time string
- */
-const formatTime = (timeStr) => {
-  let constructedTime = new Date(timeStr);
-  return constructedTime.toLocaleTimeString();
-};
-
-/************************************************************************
- *  LIFECYCLE HOOKS
- * **********************************************************************
- */
-onMounted(() => {
-  getDisplayDate();
-});
-</script>

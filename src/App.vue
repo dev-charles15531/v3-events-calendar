@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import V3EventsCalendar from "./components/V3EventsCalendar.vue";
+import Calendar from "./components/Calendar.vue";
 
 // all events data
 const events = ref([
@@ -144,7 +144,11 @@ const events = ref([
   <div class="h-screen w-full flex flex-col items-center justify-center">
     <div class="w-11/12 lg:w-9/12 h-full">
       <div class="w-full h-full">
-        <V3EventsCalendar :events="events" :primary-color="'lime'">
+        <Calendar
+          :events="events"
+          :primary-color="'lime'"
+          :sunday-start-week="false"
+        >
           <template #eventDialog="props">
             <div
               v-if="props.eventDialogData && props.eventDialogData.title"
@@ -303,7 +307,7 @@ const events = ref([
               </div>
             </div>
           </template>
-        </V3EventsCalendar>
+        </Calendar>
       </div>
     </div>
   </div>
