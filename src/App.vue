@@ -8,7 +8,7 @@ const events = ref([
     id: 1,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 1",
-    time: { start: "2023-01-01T12:00", end: "2023-01-01T14:00" },
+    time: { start: "2025-01-01T08:00", end: "2025-01-01T10:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -19,7 +19,7 @@ const events = ref([
     id: 2,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 2",
-    time: { start: "2024-06-11T02:00", end: "2024-06-11T14:00" },
+    time: { start: "2025-04-11T02:00", end: "2025-04-11T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -30,7 +30,7 @@ const events = ref([
     id: 3,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 3",
-    time: { start: "2024-10-11T12:00", end: "2024-06-11T14:00" },
+    time: { start: "2025-03-11T06:00", end: "2025-03-11T08:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -42,7 +42,7 @@ const events = ref([
     id: 4,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 4",
-    time: { start: "2024-10-11T12:00", end: "2024-06-11T14:00" },
+    time: { start: "2025-03-11T06:30", end: "2025-03-11T07:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -53,7 +53,7 @@ const events = ref([
     id: 5,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 5",
-    time: { start: "2024-10-11T12:00", end: "2024-06-11T14:00" },
+    time: { start: "2025-03-11T08:00", end: "2025-03-11T10:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -64,7 +64,7 @@ const events = ref([
     id: 6,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 6",
-    time: { start: "2024-10-11T12:00", end: "2024-06-11T14:00" },
+    time: { start: "2025-03-11T06:00", end: "2024-06-11T08:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -75,7 +75,7 @@ const events = ref([
     id: 7,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 7",
-    time: { start: "2024-10-06T12:00", end: "2024-06-06T14:00" },
+    time: { start: "2024-12-06T12:00", end: "2024-12-06T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -86,7 +86,7 @@ const events = ref([
     id: 8,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 8",
-    time: { start: "2024-10-19T12:00", end: "2024-06-19T14:00" },
+    time: { start: "2024-12-19T12:00", end: "2024-12-19T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -97,7 +97,7 @@ const events = ref([
     id: 9,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 9",
-    time: { start: "2024-10-19T12:00", end: "2024-06-19T14:00" },
+    time: { start: "2024-10-19T12:00", end: "2024-10-19T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -108,7 +108,7 @@ const events = ref([
     id: 10,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 10",
-    time: { start: "2024-10-15T12:00", end: "2024-06-15T14:00" },
+    time: { start: "2024-10-15T12:00", end: "2024-10-15T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -119,7 +119,7 @@ const events = ref([
     id: 11,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 11",
-    time: { start: "2024-10-15T12:00", end: "2024-06-15T14:00" },
+    time: { start: "2025-03-15T12:00", end: "2025-03-15T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",
@@ -130,7 +130,7 @@ const events = ref([
     id: 12,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 12",
-    time: { start: "2024-10-02T12:00", end: "2024-06-02T14:00" },
+    time: { start: "2024-12-29T12:00", end: "2025-01-01T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",

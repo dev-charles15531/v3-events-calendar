@@ -1,12 +1,15 @@
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { defineAsyncComponent, ref } from "vue";
 import Header from "./Header.vue";
-import Body from "./Body.vue";
-import { addMonths, subMonths } from "date-fns";
+import { addMonths, addWeeks, subMonths, subWeeks } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import Footer from "./Footer.vue";
 import { usePopover } from "../composables/popover";
 import Modal from "./Modal.vue";
+import { CalendarEvent, StatusEnum } from "../types/calendar";
+import { Color } from "../types";
+import MonthView from "./MonthView.vue";
+import WeekView from "./WeekView.vue";
 
 /**************************************
  * PROPS
@@ -36,28 +39,77 @@ const props = defineProps({
 });
 
 /**************************************
+ * CALENDAR VIEW
+ **************************************/
+const viewComponents = {
+  month: MonthView,
+  week: WeekView,
+};
+
+const currentCalendarView = ref(StatusEnum.MONTHLY_VIEW);
+
+/**
+ * Changes the current calendar view to the given view.
+ *
+ * @param {StatusEnum} view - The new view for the calendar.
+ */
+const changeCalendarView = (view: StatusEnum) => {
+  if (view === StatusEnum.MONTHLY_VIEW) {
+    currentCalendarView.value = StatusEnum.MONTHLY_VIEW;
+  } else if (view === StatusEnum.WEEKLY_VIEW) {
+    currentCalendarView.value = StatusEnum.WEEKLY_VIEW;
+  }
+};
+
+/**************************************
  * DATE UTILITIES
  **************************************/
-const now = toZonedTime(new Date(), props.timezone);
+const now: Date = toZonedTime(new Date(), props.timezone);
 const currentDate = ref(now);
 
 /**************************************
  * DATE NAVIGATION
  **************************************/
-const goToNextMonth = () =>
-  (currentDate.value = addMonths(currentDate.value, 1));
-const goToPrevMonth = () =>
-  (currentDate.value = subMonths(currentDate.value, 1));
+/**
+ * Changes the current date to the next month/week/day in the calendar.
+ */
+const goToNext = () => {
+  if (currentCalendarView.value === StatusEnum.MONTHLY_VIEW) {
+    currentDate.value = addMonths(currentDate.value, 1);
+  } else if (currentCalendarView.value === StatusEnum.WEEKLY_VIEW) {
+    currentDate.value = addWeeks(currentDate.value, 1);
+  }
+};
+
+/**
+ * Changes the current date to the previous month/week/day in the calendar.
+ */
+const goToPrev = () => {
+  if (currentCalendarView.value === StatusEnum.MONTHLY_VIEW) {
+    currentDate.value = subMonths(currentDate.value, 1);
+  } else if (currentCalendarView.value === StatusEnum.WEEKLY_VIEW) {
+    currentDate.value = subWeeks(currentDate.value, 1);
+  }
+};
+
+/**
+ * Sets the current date to today's date.
+ */
 const jumpToToday = () => (currentDate.value = now);
-const changeDate = (date) =>
+
+/**
+ * Sets the current date to the given date.
+ *
+ * @param {Date} date - The new date to set in the calendar.
+ */
+const changeDate = (date: Date) =>
   (currentDate.value = toZonedTime(date, props.timezone));
 
 /**************************************
  * POPOVER
  **************************************/
 const popoverRef = ref(null);
-const { popoverShow, todaysEvent, togglePopover } =
-  usePopover(popoverRef);
+const { popoverShow, todaysEvent, togglePopover } = usePopover(popoverRef);
 
 /**************************************
  * MODAL
@@ -65,17 +117,14 @@ const { popoverShow, todaysEvent, togglePopover } =
 const modalShow = ref(false);
 const modalDay = ref(null);
 const modalEvents = ref([]);
+
 /**
  * Open the event listing modal
  *
- * @param {number} day current calendar month day
- * @param {array} events Array of events objects to show on the modal
- *
- * @return null
+ * @param {string} day current calendar month day
+ * @param {CalendarEvent[]} events Array of events objects to show on the modal
  */
-const openModal = (day, events) => {
-  console.log(day);
-  
+const openModal = (day: string, events: CalendarEvent[]) => {
   popoverShow.value = false;
   modalEvents.value = events;
   modalDay.value = day;
@@ -93,20 +142,23 @@ const closeModal = () => {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="w-full h-full lg:pb-4 flex flex-col">
     <Header
       :now="now"
       :current-date="currentDate"
       :timezone="timezone"
-      :primary-color="primaryColor"
+      :primary-color="primaryColor as Color"
       :show-add-btn="showAddBtn"
+      :current-calendar-view="currentCalendarView"
       @go-to-today="jumpToToday"
-      @go-to-next-month="goToNextMonth"
-      @go-to-prev-month="goToPrevMonth"
+      @go-to-next="goToNext"
+      @go-to-prev="goToPrev"
       @date-change="changeDate"
+      @view-change="changeCalendarView"
     />
 
-    <Body
+    <component
+      :is="viewComponents[currentCalendarView]"
       :current-date="currentDate"
       :timezone="timezone"
       :primary-color="primaryColor"
@@ -114,26 +166,26 @@ const closeModal = () => {
       :sunday-start-week="sundayStartWeek"
       @toggle-popover="togglePopover"
       @open-modal="openModal"
-    />
+    ></component>
 
     <Footer
       @go-to-today="jumpToToday"
-      @go-to-next-month="goToNextMonth"
-      @go-to-prev-month="goToPrevMonth"
+      @go-to-next-month="goToNext"
+      @go-to-prev-month="goToPrev"
     />
 
     <!-- popover component  -->
-      <div
-        ref="popoverRef"
-        :class="{ hidden: !popoverShow, block: popoverShow }"
-        class="absolute bg-gray-50 z-50 max-w-2xs rounded-lg shadow-md"
-      >
-        <slot
-          name="eventDialog"
-          :eventDialogData="todaysEvent"
-          :closeEventDialog="togglePopover"
-        />
-      </div>
+    <div
+      ref="popoverRef"
+      :class="{ hidden: !popoverShow, block: popoverShow }"
+      class="absolute bg-gray-50 z-50 max-w-2xs rounded-lg shadow-md"
+    >
+      <slot
+        name="eventDialog"
+        :eventDialogData="todaysEvent"
+        :closeEventDialog="togglePopover"
+      />
+    </div>
 
     <!-- modal component -->
     <transition name="modal">

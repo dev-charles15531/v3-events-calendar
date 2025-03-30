@@ -1,20 +1,30 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { format } from "date-fns-tz";
+import { CalendarEvent } from "../types/calendar";
 
-const props = defineProps({
-  day: String,
-  events: Array,
-  primaryColor: String,
-  timezone: String,
-});
+
+interface ComponentProps {
+  day: string,
+  events: CalendarEvent[],
+  primaryColor: string,
+  timezone: string,
+}
+
+const props = defineProps<ComponentProps>();
 
 /**************************************
  * EMITS
  * ************************************
  */
 const emit = defineEmits(["togglePopover", "closeModal"]);
-const eventClick = (evt, event) => {
+/**
+ * Emit a togglePopover event with the event target and the calendar event.
+ *
+ * @param {MouseEvent} evt - The mouse event triggered by the user interaction.
+ * @param {CalendarEvent} event - The calendar event to toggle the popover for.
+ */
+const eventClick = (evt: MouseEvent, event: CalendarEvent): void => {
   emit("togglePopover", evt.target, event);
 };
 
@@ -29,8 +39,13 @@ const modalDayNumber = computed(() =>
   format(props.day, "d", { timeZone: props.timezone })
 );
 
-// Format time with timezone
-const formatTime = (timeStr) => {
+/**
+ * Format a time string with timezone.
+ *
+ * @param {string} timeStr - Time string in ISO format (e.g. "2022-12-25T10:00:00.000Z").
+ * @returns {string} Formatted time string (e.g. "10:00 AM").
+ */
+const formatTime = (timeStr: string): string => {
   const date = new Date(timeStr);
   return format(date, "p:mm a", {
     timeZone: props.timezone,

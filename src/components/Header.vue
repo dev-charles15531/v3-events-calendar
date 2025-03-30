@@ -9,40 +9,29 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { ref, computed } from "vue";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import {
-  format,
-  getYear,
-  getMonth,
-} from "date-fns";
-import {format as tzFormat } from "date-fns-tz";
+import { format, getYear, getMonth } from "date-fns";
+import { format as tzFormat } from "date-fns-tz";
+import { CalendarProps, StatusEnum } from "../types/calendar";
+
+type ComponentProps = Omit<CalendarProps, "events" | "sundayStartWeek"> & {
+  now: Date;
+  showAddBtn: boolean;
+  currentCalendarView: StatusEnum;
+};
 
 /**************************************
  * PROPS
  **************************************/
-const props = defineProps({
-  timezone: {
-    type: String,
-    required: true,
-  },
-  primaryColor: {
-    type: String,
-    required: true,
-  },
-  showAddBtn: {
-    type: Boolean,
-    required: true,
-  },
-  now: {
-    type: Date,
-    required: true,
-  },
-  currentDate: {
-    type: Date,
-    required: true,
-  }
-});
+const props = defineProps<ComponentProps>();
 
-const emit = defineEmits(['dateChange', 'goToPrevMonth', 'goToNextMonth', 'goToToday', 'addEvent']);
+const emit = defineEmits([
+  "dateChange",
+  "goToPrev",
+  "goToNext",
+  "goToToday",
+  "addEvent",
+  "viewChange",
+]);
 
 /**************************************
  * DATE UTILITIES
@@ -58,8 +47,13 @@ const currentMonth = computed(() => getMonth(props.currentDate));
  **************************************/
 const dpDate = ref(props.currentDate);
 const handleDate = (date: Date) => {
-  emit('dateChange', date);
+  emit("dateChange", date);
 };
+
+/**************************************
+ * CALENDAR VIEW HANDLING
+ **************************************/
+const calendarView = ref(props.currentCalendarView);
 </script>
 
 <template>
@@ -78,14 +72,14 @@ const handleDate = (date: Date) => {
           <button
             type="button"
             class="h-10 w-9 flex items-center justify-center rounded-l-md border-y border-l border-gray-300 text-gray-400 hover:text-gray-500 cursor-pointer focus:relative hover:bg-gray-100 active:bg-gray-200"
-            @click="$emit('goToPrevMonth')"
+            @click="$emit('goToPrev')"
           >
             <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
           </button>
 
           <button
             type="button"
-            class="h-10 border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 text-center hover:bg-gray-100 focus:relative cursor-pointer active:bg-gray-200"
+            class="h-10 border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-800 text-center hover:bg-gray-100 focus:relative cursor-pointer active:bg-gray-200"
             @click="$emit('goToToday')"
           >
             Today
@@ -94,7 +88,7 @@ const handleDate = (date: Date) => {
           <button
             type="button"
             class="h-10 w-9 flex items-center justify-center rounded-r-md border-y border-r border-gray-300 text-gray-400 hover:text-gray-500 focus:relative cursor-pointer hover:bg-gray-100 active:bg-gray-200"
-            @click="$emit('goToNextMonth')"
+            @click="$emit('goToNext')"
           >
             <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
           </button>
@@ -127,13 +121,23 @@ const handleDate = (date: Date) => {
                 </svg>
               </div>
               <div>
-                <span class="text-sm font-medium">
+                <span class="text-sm font-medium text-gray-800">
                   {{ format(currentDate, "MMM yyyy") }}
                 </span>
               </div>
             </div>
           </template>
         </Datepicker>
+
+        <select
+          v-model="calendarView"
+          @change="$emit('viewChange', calendarView.toLowerCase())"
+          class="h-10 px-3 border border-gray-300 rounded-md text-sm font-medium text-gray-800 bg-white hover:bg-gray-100 focus:outline-none focus:ring focus:ring-gray-400 focus:border-gray-400 transition-colors cursor-pointer"
+        >
+          <option value="month">Month</option>
+          <option value="week">Week</option>
+          <option value="day">Day</option>
+        </select>
       </div>
 
       <div v-if="showAddBtn" class="hidden md:flex md:items-center">
@@ -166,7 +170,7 @@ const handleDate = (date: Date) => {
         >
           <MenuItems
             :class="[
-              `absolute right-0 z-10 mt-3 w-36 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-gray-400 ring-opacity-5 focus:outline-none`,
+              `absolute right-0 z-20 mt-3 w-36 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-gray-400 ring-opacity-5 focus:outline-none`,
             ]"
           >
             <div class="py-1">

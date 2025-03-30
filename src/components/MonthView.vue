@@ -3,7 +3,6 @@ import { computed, ComputedRef, watch } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import {
   format,
-  addDays,
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
@@ -14,15 +13,18 @@ import {
   parseISO,
 } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
+import { useUtils } from "../composables/useUtils";
 import { CalendarEvent, CalendarProps } from "../types/calendar";
-const emit = defineEmits(["togglePopover", "openModal"]);
 
-interface Days {
+interface WeekDays {
   date: string;
   isCurrentMonth: boolean;
   events: CalendarEvent[];
   isToday: boolean;
 }
+
+
+const emit = defineEmits(["togglePopover", "openModal"]);
 
 /**************************************
  * PROPS
@@ -32,6 +34,8 @@ const props = defineProps<CalendarProps>();
 /**************************************
  * DAYS GENERATION
  **************************************/
+const { daysOfWeekArr } = useUtils();
+
 const days = computed(() => {
   let som = startOfMonth(props.currentDate);
   const start = startOfWeek(som, {
@@ -54,50 +58,37 @@ const days = computed(() => {
   });
 });
 
-// Generate the days of the week
-const daysOfWeek = Array.from({ length: 7 }).map((_, i) => {
-  const startOfWeekDate = startOfWeek(startOfMonth(props.currentDate), {
-    weekStartsOn: props.sundayStartWeek ? 0 : 1,
-  });
-
-  const day = addDays(startOfWeekDate, i);
-
-  return format(day, "EEE");
-});
-
 /**
  * Maps the events to the days array.
  *
  * Goes through each event, converts its start time to the correct timezone and
  * then finds the corresponding day in the days array and adds the event to it.
  *
- * @param {ComputedRef<Days[]>} days - The computed days array
- * @param {CalendarEvent[]} events - The events to add to the days array
+ * @param days - The computed days array
+ * @param events - The events to add to the days array
  */
 const mapEventsToDays = (
-  days: ComputedRef<Days[]>,
+  days: ComputedRef<WeekDays[]>,
   events: CalendarEvent[]
-) => {
+): void => {
   events.forEach((event) => {
     const eventDate = format(
       toZonedTime(parseISO(event.time.start), props.timezone),
       "yyyy-MM-dd"
     );
-
     const day = days.value.find((d) => d.date === eventDate);
-
     if (day) day.events.push(event);
   });
 };
 
 /**
- * Emits a togglePopover event with the event target and the calendar event.
+ * Emit a togglePopover event with the event target and the calendar event.
  *
  * @param {MouseEvent} evt - The mouse event triggered by the user interaction.
  * @param {CalendarEvent} event - The calendar event to toggle the popover for.
  */
 const handlePopoverToggle = (evt: MouseEvent, event: CalendarEvent): void => {
-  emit("togglePopover", evt, event);
+  emit("togglePopover", evt.currentTarget, event);
 };
 
 /**
@@ -110,12 +101,19 @@ const handleModalOpen = (day: string, events: CalendarEvent[]): void => {
   emit("openModal", day, events);
 };
 
-const isEventBackground = (event: CalendarEvent) => !!event.background;
+/**
+ * Checks if an event has a background color.
+ *
+ * @param {CalendarEvent} event - The event to check.
+ * @returns {boolean} Whether the event has a background color.
+ */
+const isEventBackground = (event: CalendarEvent): boolean => !!event.background;
 
 watch(
   () => props.events,
   () => mapEventsToDays(days, props.events)
 );
+
 watch(
   () => props.currentDate,
   () => mapEventsToDays(days, props.events)
@@ -130,7 +128,7 @@ watch(
       <div
         class="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 lg:flex-none"
       >
-        <div v-for="day in daysOfWeek" :key="day" class="bg-white py-2">
+        <div v-for="day in daysOfWeekArr(currentDate, sundayStartWeek)" :key="day" class="bg-white py-2">
           {{ day }}
           <span class="sr-only sm:not-sr-only">{{ day.slice(3) }}</span>
         </div>

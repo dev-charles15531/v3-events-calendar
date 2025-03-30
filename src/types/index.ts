@@ -1,0 +1,16 @@
+export type Color =
+  | "rose"
+  | "pink"
+  | "fuchsia"
+  | "purple"
+  | "violet"
+  | "blue"
+  | "indigo"
+  | "cyan"
+  | "teal"
+  | "green"
+  | "lime"
+  | "yellow"
+  | "amber"
+  | "orange"
+  | "red";
