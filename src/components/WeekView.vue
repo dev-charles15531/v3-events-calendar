@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import {
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  useTemplateRef,
-  watchEffect,
-} from "vue";
-import { useUtils } from "../composables/useUtils";
+import { onBeforeUnmount, ref } from "vue";
 import { useWeekView } from "../composables/useWeekView";
 import { CalendarProps } from "../types/calendar";
+import { useUtils } from "../composables/useUtils";
+
+const emit = defineEmits([
+  "togglePopover",
+  "openModal",
+  "event-click",
+  "cleanPopover",
+]);
+const { handlePopoverToggle, handleModalOpen } = useUtils(emit);
 
 /**************************************
  * PROPS
  **************************************/
 const props = defineProps<CalendarProps>();
 
-const emit = defineEmits(["event-click"]);
-
 const { weekDays, formatHour, formatDate, eventPosition, eventTime } =
   useWeekView(props);
 
 const timeColumn = ref(null);
 const daysGrid = ref(null);
-let isScrolling = false;
+const isScrolling = ref(false);
 
 /**
  * Syncs the scroll position of the time column and the days grid.
@@ -38,11 +38,11 @@ let isScrolling = false;
  * @param {Event} event - The event object that triggered the scroll event.
  */
 const syncScroll = (event: Event) => {
-  if (isScrolling) return;
+  emit("cleanPopover"); // destroy and clean any open popover
 
-  isScrolling = true;
+  if (isScrolling.value) return;
 
-  ubbopu();
+  isScrolling.value = true;
 
   if (event.target === timeColumn.value) {
     daysGrid.value.scrollTop = timeColumn.value.scrollTop;
@@ -51,63 +51,29 @@ const syncScroll = (event: Event) => {
   }
 
   requestAnimationFrame(() => {
-    isScrolling = false;
+    isScrolling.value = false;
   });
 };
-
-const dayHeader = useTemplateRef("day-header");
-const bottomBorderEl = useTemplateRef("bottom-border-el");
-const dayHeaderYPos = ref(0);
-const updateDayHeaderYPos = () => {
-  const { y } = dayHeader.value[0].getBoundingClientRect();
-  dayHeaderYPos.value = y;
-};
-
-// Update Bottom Border On Position Update
-const ubbopu = () => {
-  const els = bottomBorderEl.value;
-
-  if (!els) return;
-
-  els.forEach((el) => {
-    const { y } = el.getBoundingClientRect();
-    if (y < dayHeaderYPos.value) {
-      el.classList.replace("border-b", "border-none");
-    } else if (y > dayHeaderYPos.value) {
-      el.classList.replace("border-none", "border-b");
-    }
-  });
-};
-
-onMounted(() => {
-  updateDayHeaderYPos();
-
-  window.addEventListener("resize", updateDayHeaderYPos);
-  window.addEventListener("scroll", updateDayHeaderYPos);
-});
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", updateDayHeaderYPos);
-  window.removeEventListener("scroll", updateDayHeaderYPos);
-});
-
-watchEffect(() => {
-  if (dayHeaderYPos.value !== 0) updateDayHeaderYPos();
+  emit("cleanPopover");
 });
 </script>
 
 <template>
-  <div class="h-full shadow ring-1 ring-gray-300 ring-opacity-5 flex">
+  <div
+    class="mb-1 w-full shadow ring-1 ring-gray-300 ring-opacity-5 flex flex-grow overflow-hidden"
+  >
     <!-- Time Column -->
     <div
       ref="timeColumn"
-      class="w-16 md:w-20 flex-shrink-0 ring-1 ring-gray-300 ring-opacity bg-gray-50 overflow-y-auto hide-scrollbar"
+      class="w-5 md:w-16 flex-shrink-0 ring-1 ring-gray-300 ring-opacity bg-gray-50 overflow-y-auto hide-scrollbar"
       @scroll="syncScroll"
     >
       <div
         v-for="(hour, idx) in 25"
         :key="hour"
-        class="h-[60px] relative text-xs px-2 py-1 border-b border-gray-300 text-gray-600 flex items-end justify-end"
+        class="h-[50px] relative text-[0.37rem] md:text-xs tracking-tighter md:tracking-tight px-0.5 md:px-2 py-1 border-b border-gray-300 text-gray-600 font-medium flex items-end justify-end"
       >
         <span v-if="hour > 1">
           {{ formatHour(idx - 1) }}
@@ -128,8 +94,7 @@ watchEffect(() => {
       >
         <!-- Day Header -->
         <div
-          class="h-[60px] sticky top-0 border-b border-gray-300 z-10 px-2 py-1 text-sm font-medium"
-          ref="day-header"
+          class="h-[50px] w-[99.7%] bg-white sticky top-0 border-b border-gray-300 z-10 px-1 py-1 text-xs md:text-sm font-medium"
         >
           <div class="text-gray-700 text-center hidden md:block">
             {{ formatDate(day.date, "EEE") }}
@@ -137,10 +102,12 @@ watchEffect(() => {
           <div class="text-gray-700 text-center md:hidden">
             {{ formatDate(day.date, "EEEEE") }}
           </div>
-          <div class="flex items-center justify-center">
+          <div
+            class="flex items-center justify-center text-[0.65rem] md:text-sm"
+          >
             <div
               :class="[
-                'h-6 w-6 flex justify-center items-center rounded-full',
+                'h-5 md:h-6 w-5 md:w-6 flex flex-col justify-center items-center rounded-full text-center',
                 day.isToday ? `bg-${primaryColor}-600 text-white` : '',
               ]"
             >
@@ -154,8 +121,7 @@ watchEffect(() => {
           <div
             v-for="hour in 24"
             :key="hour"
-            class="h-[60px] border-b border-gray-300"
-            ref="bottom-border-el"
+            class="h-[50px] border-b border-gray-300"
           ></div>
         </div>
 
@@ -164,15 +130,35 @@ watchEffect(() => {
           <div
             v-for="event in day.events"
             :key="event.id"
-            class="absolute left-1 right-1 rounded-lg p-2 text-sm shadow-sm border pointer-events-auto"
+            class="absolute left-0.5 right-0.5 rounded md:rounded-lg px-0.5 md:px-1.5 lg:px-2 py-2 md:py-2.5 text-[0.4rem] md:text-sm md:border shadow-sm pointer-events-auto cursor-pointer"
             :class="[
-              `bg-${event.color}-100 border-${event.color}-200 text-${event.color}-800`,
+              `border-${event.background ?? primaryColor}-600 bg-${
+                event.background ?? primaryColor
+              }-50 text-${event.background ?? primaryColor}-600`,
             ]"
             :style="eventPosition(event)"
-            @click.stop="console.log(event)"
+            @click.stop="
+              event.eventCount === 1
+                ? handlePopoverToggle($event, event)
+                : handleModalOpen(day.date.toString(), event.timeSlotEvents)
+            "
           >
-            <div class="font-medium truncate">{{ event.title }}</div>
-            <div class="text-xs mt-1">{{ eventTime(event) }}</div>
+            <div
+              v-if="event.eventCount > 1"
+              class="font-medium truncate text-center"
+            >
+              {{ `${event.eventCount} events` }}
+            </div>
+            <div v-else class="font-medium truncate text-center">
+              <div class="font-semibold truncate text-center">
+                {{ event.title }}
+              </div>
+            </div>
+            <div class="my-1 flex justify-center">
+              <div class="text-center">{{ eventTime(event)[0] }}</div>
+              <div class="text-center mx-0.5 md:mx-1">-</div>
+              <div class="text-center">{{ eventTime(event)[1] }}</div>
+            </div>
           </div>
         </div>
       </div>

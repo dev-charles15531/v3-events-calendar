@@ -24,9 +24,8 @@ export interface CalendarProps {
   sundayStartWeek: boolean;
 }
 
-
 export enum StatusEnum {
-  MONTHLY_VIEW = "month",
-  WEEKLY_VIEW = "week",
-  DAILY_VIEW = "day",
+  MONTH_VIEW = "month",
+  WEEK_VIEW = "week",
+  DAY_VIEW = "day",
 }

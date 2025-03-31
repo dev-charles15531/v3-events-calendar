@@ -1,8 +1,11 @@
 // import { ref, onMounted, onUnmounted } from "vue";
 import { format, addDays, startOfMonth, startOfWeek } from "date-fns";
+import { CalendarEvent } from "../types/calendar";
 // import { toZonedTime } from "date-fns-tz";
 
-export function useUtils() {
+export function useUtils(
+  emit: (event: "togglePopover" | "openModal", ...args: any[]) => void
+) {
   /**
    * Generates an array of abbreviated day names (e.g., ["Sun", "Mon", ...])
    * for the week starting from the first day of the week, based on the
@@ -28,5 +31,25 @@ export function useUtils() {
     return daysOfWeek;
   };
 
-  return { daysOfWeekArr };
+  /**
+   * Emit a togglePopover event with the event target and the calendar event.
+   *
+   * @param {MouseEvent} evt - The mouse event triggered by the user interaction.
+   * @param {CalendarEvent} event - The calendar event to toggle the popover for.
+   */
+  const handlePopoverToggle = (evt: MouseEvent, event: CalendarEvent): void => {
+    emit("togglePopover", evt.currentTarget, event);
+  };
+
+  /**
+   * Emit an openModal event with the date and events
+   *
+   * @param {string} day - The date to open the modal for in ISO format
+   * @param {CalendarEvent[]} events - The events to show in the modal
+   */
+  const handleModalOpen = (day: string, events: CalendarEvent[]): void => {
+    emit("openModal", day, events);
+  };
+
+  return { daysOfWeekArr, handlePopoverToggle, handleModalOpen };
 }

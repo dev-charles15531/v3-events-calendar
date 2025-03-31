@@ -7,10 +7,10 @@ import {
 const emit = defineEmits(['dateChange', 'goToPrevMonth', 'goToNextMonth', 'goToToday', 'addEvent']);
 </script>
 
-
 <template>
+  <div class="mt-0.5 flex-shrink-0">
     <div
-      class="md:hidden relative shadow ring-1 ring-gray-300 ring-opacity-5 flex items-center bg-white"
+      class="md:hidden shadow ring-1 ring-gray-300 ring-opacity-5 flex items-center bg-white"
     >
       <button
         type="button"
@@ -38,4 +38,5 @@ const emit = defineEmits(['dateChange', 'goToPrevMonth', 'goToNextMonth', 'goToT
         <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
       </button>
     </div>
+  </div>
 </template>

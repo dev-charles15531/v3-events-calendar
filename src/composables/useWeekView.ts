@@ -12,10 +12,21 @@ import { toZonedTime } from "date-fns-tz";
 import { computed, ComputedRef } from "vue";
 import { CalendarEvent, CalendarProps } from "../types/calendar";
 
+// interface WeekDays {
+//   date: Date;
+//   isToday: boolean;
+//   events: (CalendarEvent & { eventCount: number })[];
+// }
+
+interface EnhancedCalendarEvent extends CalendarEvent {
+  eventCount: number;
+  timeSlotEvents?: CalendarEvent[];
+}
+
 interface WeekDays {
   date: Date;
   isToday: boolean;
-  events: CalendarEvent[];
+  events: EnhancedCalendarEvent[];
 }
 
 export const useWeekView = (
@@ -25,7 +36,7 @@ export const useWeekView = (
   formatHour: (hour: number) => string;
   formatDate: (date: Date, formatStr: string) => string;
   eventPosition: (event: CalendarEvent) => { top: string; height: string };
-  eventTime: (event: CalendarEvent) => string;
+  eventTime: (event: CalendarEvent) => string[];
 } => {
   const getZonedDate = (date: Date) => toZonedTime(date, props.timezone);
 
@@ -40,52 +51,39 @@ export const useWeekView = (
     const end = endOfWeek(props.currentDate, {
       weekStartsOn: props.sundayStartWeek ? 0 : 1,
     });
-
-    const days: WeekDays[] = eachDayOfInterval({ start, end }).map<WeekDays>(
-      (date) => {
-        // Filter the events for this particular day
-        const eventsForDay = props.events.filter((event: CalendarEvent) =>
-          isSameDay(getZonedDate(parseISO(event.time.start)), date)
-        );
-
-        // Group events by their start time to calculate the count per time slot
-        type CalendarEventWithHourKey = CalendarEvent & { hourKey: string };
-        const groupedEvents = eventsForDay.reduce(
-          (acc: CalendarEventWithEvtCount, event: CalendarEvent) => {
-            const eventStart = getZonedDate(parseISO(event.time.start));
-            const hourKey = `${eventStart.getHours()}:${eventStart.getMinutes()}`; // Group by exact time (hour:minute)
-
-            if (!acc[hourKey]) {
-              acc[hourKey] = [];
-            }
-
-            acc[hourKey].push(event); // Add event to the corresponding time slot
-            return acc;
-          },
-          {} as CalendarEventWithHourKey
-        );
-
-        // Add the event count for each group of events, and return only one event per group
-        type CalendarEventWithEvtCount = CalendarEvent & { eventCount: number };
-        const eventsWithCount: CalendarEventWithEvtCount[] = Object.entries(
-          groupedEvents
-        ).map(([_, eventsInTimeSlot]: [string, CalendarEvent[]]) => {
-          const eventCount = eventsInTimeSlot.length;
-          const event = eventsInTimeSlot[0];
-          return {
-            ...event,
-            eventCount,
-          };
-        });
-
+  
+    const days: WeekDays[] = eachDayOfInterval({ start, end }).map<WeekDays>((date) => {
+      const eventsForDay = props.events.filter((event: CalendarEvent) =>
+        isSameDay(getZonedDate(parseISO(event.time.start)), date)
+      );
+  
+      // Group events by their start time
+      const groupedEvents = eventsForDay.reduce((acc: Record<string, CalendarEvent[]>, event) => {
+        const eventStart = getZonedDate(parseISO(event.time.start));
+        const hourKey = `${eventStart.getHours()}:${String(eventStart.getMinutes()).padStart(2, '0')}`;
+        
+        acc[hourKey] = acc[hourKey] || [];
+        acc[hourKey].push(event);
+        return acc;
+      }, {});
+  
+      // Create enhanced event objects
+      const enhancedEvents = Object.entries(groupedEvents).map(([timeSlot, events]) => {
+        const baseEvent = events[0];
         return {
-          date,
-          isToday: isToday(date),
-          events: eventsWithCount,
+          ...baseEvent,
+          eventCount: events.length,
+          timeSlotEvents: events.length > 1 ? events : undefined,
         };
-      }
-    );
-
+      });
+  
+      return {
+        date,
+        isToday: isToday(date),
+        events: enhancedEvents,
+      };
+    });
+  
     return days;
   });
 
@@ -130,14 +128,22 @@ export const useWeekView = (
   };
 
   /**
-   * Format a given event's start and end times in a 12-hour format with AM/PM.
-   * @param {CalendarEvent} event - The event to format the time for.
-   * @returns {string} - The formatted time string.
+   * Return the start and end times of an event in a human-readable format.
+   * @param {CalendarEvent} event - The event to get the times for.
+   * @returns {string[]} - An array with two elements, the start time in 12-hour format with AM/PM,
+   * and the end time in the same format.
    */
-  const eventTime = (event: CalendarEvent): string => {
+
+  const eventTime = (event: CalendarEvent): string[] => {
     const start = getZonedDate(parseISO(event.time.start));
     const end = getZonedDate(parseISO(event.time.end));
-    return `${format(start, "h:mma")} - ${format(end, "h:mma")}`;
+
+    const formatTime = (date: Date) =>
+      date.getMinutes() === 0
+        ? format(date, "ha").toLowerCase()
+        : format(date, "h:mma").toLowerCase();
+
+    return [formatTime(start), formatTime(end)];
   };
 
   /**

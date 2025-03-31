@@ -3,12 +3,11 @@ import { computed } from "vue";
 import { format } from "date-fns-tz";
 import { CalendarEvent } from "../types/calendar";
 
-
 interface ComponentProps {
-  day: string,
-  events: CalendarEvent[],
-  primaryColor: string,
-  timezone: string,
+  day: string;
+  events: CalendarEvent[];
+  primaryColor: string;
+  timezone: string;
 }
 
 const props = defineProps<ComponentProps>();
@@ -173,14 +172,14 @@ const formatTime = (timeStr: string): string => {
         class="modal-foooter w-full flex justify-center items-center h-[14%]"
       >
         <slot name="footer">
-          <div class="flex space-x-1 items-center">
+          <div
+            class="flex space-x-1 items-center cursor-pointer hover:transform hover:scale-105 transition-all duration-300"
+            @click="$emit('closeModal')"
+          >
             <div>
               <h3 class="text-sm md:text-base font-medium">close</h3>
             </div>
-            <div
-              class="font-semibold hover:rotate-2 transition-all duration-700 cursor-pointer"
-              @click="$emit('closeModal')"
-            >
+            <div class="font-semibold">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

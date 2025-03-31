@@ -1,34 +1,44 @@
 import { ref, type Ref } from "vue";
-import {useFloating, autoUpdate, offset, flip, shift} from '@floating-ui/vue';
-import { computePosition, autoPlacement } from '@floating-ui/dom';
+import { useFloating, autoUpdate, flip, shift } from "@floating-ui/vue";
+import { computePosition, autoPlacement, inline } from "@floating-ui/dom";
 
-
-export function usePopover(
-  popoverRef: Ref<HTMLElement>
-): {
+export function usePopover(popoverRef: Ref<HTMLElement>): {
   popoverShow: Ref<boolean>;
   todaysEvent: Ref<Record<string, unknown>>;
-  togglePopover: (el: HTMLElement, todaysEvt: Record<string, unknown>) => void;
+  openPopover: (el: HTMLElement, todaysEvt: Record<string, unknown>) => void;
+  closePopover: () => void;
 } {
   // state encapsulated and managed by the composable
   const popoverShow = ref<boolean>(false);
   const todaysEvent = ref<Record<string, unknown>>({});
   const elRef = ref<HTMLElement | null>(null);
+  let cleanup: () => void = null;
+
   useFloating(elRef, popoverRef, {
     whileElementsMounted: autoUpdate,
   });
-  const manualUpdate = async () => {
+
+  /**
+   * Run the autoUpdate function to reposition the popover
+   * after the element and popover have been mounted.
+   *
+   * @returns A cleanup function that can be called to
+   * stop the autoUpdate loop.
+   */
+  const runUpdate = async () => {
     if (!elRef.value || !popoverRef.value) return;
-    
-    const { x, y } = await computePosition(
-      elRef.value,
-      popoverRef.value,
-      {
-        middleware: [offset(-1), flip(), shift(), autoPlacement()]
-      }
-    );
-  
-    popoverRef.value.style.transform = `translate(${x}px, ${y}px)`;
+
+    cleanup = autoUpdate(elRef.value, popoverRef.value, () => {
+      computePosition(elRef.value, popoverRef.value, {
+        placement: "right",
+        middleware: [flip({fallbackPlacements: ["right", "left"]}), shift(), inline()],
+      }).then(({ x, y }) => {
+        Object.assign(popoverRef.value.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
+      });
+    });
   };
 
   /**
@@ -37,23 +47,35 @@ export function usePopover(
    * @param {Record<string, unknown>} todaysEvt The event for the current day
    * @returns
    */
-  const togglePopover = async (el: HTMLElement, todaysEvt: Record<string, unknown>) => {    
+  const openPopover = async (
+    el: HTMLElement,
+    todaysEvt: Record<string, unknown>
+  ) => {
     if (popoverShow.value == false) {
       elRef.value = el;
       todaysEvent.value = todaysEvt;
-      
-      await manualUpdate();
+
+      await runUpdate();
 
       popoverShow.value = true;
 
       return;
     }
-
-    popoverShow.value = false;
-    todaysEvent.value = {};
   };
 
+  /**
+   * Closes the popover
+   *
+   * Sets the popoverShow state to false, removes the current event
+   * from the todaysEvent state, and stops the autoUpdate loop.
+   */
+  const closePopover = () => {
+    popoverShow.value = false;
+    todaysEvent.value = {};
+
+    cleanup?.();
+  };
 
   // expose managed state as return value
-  return { popoverShow, todaysEvent, togglePopover };
+  return { popoverShow, todaysEvent, openPopover, closePopover };
 }

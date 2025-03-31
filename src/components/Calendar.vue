@@ -46,7 +46,7 @@ const viewComponents = {
   week: WeekView,
 };
 
-const currentCalendarView = ref(StatusEnum.MONTHLY_VIEW);
+const currentCalendarView = ref(StatusEnum.MONTH_VIEW);
 
 /**
  * Changes the current calendar view to the given view.
@@ -54,10 +54,10 @@ const currentCalendarView = ref(StatusEnum.MONTHLY_VIEW);
  * @param {StatusEnum} view - The new view for the calendar.
  */
 const changeCalendarView = (view: StatusEnum) => {
-  if (view === StatusEnum.MONTHLY_VIEW) {
-    currentCalendarView.value = StatusEnum.MONTHLY_VIEW;
-  } else if (view === StatusEnum.WEEKLY_VIEW) {
-    currentCalendarView.value = StatusEnum.WEEKLY_VIEW;
+  if (view === StatusEnum.MONTH_VIEW) {
+    currentCalendarView.value = StatusEnum.MONTH_VIEW;
+  } else if (view === StatusEnum.WEEK_VIEW) {
+    currentCalendarView.value = StatusEnum.WEEK_VIEW;
   }
 };
 
@@ -74,9 +74,9 @@ const currentDate = ref(now);
  * Changes the current date to the next month/week/day in the calendar.
  */
 const goToNext = () => {
-  if (currentCalendarView.value === StatusEnum.MONTHLY_VIEW) {
+  if (currentCalendarView.value === StatusEnum.MONTH_VIEW) {
     currentDate.value = addMonths(currentDate.value, 1);
-  } else if (currentCalendarView.value === StatusEnum.WEEKLY_VIEW) {
+  } else if (currentCalendarView.value === StatusEnum.WEEK_VIEW) {
     currentDate.value = addWeeks(currentDate.value, 1);
   }
 };
@@ -85,9 +85,9 @@ const goToNext = () => {
  * Changes the current date to the previous month/week/day in the calendar.
  */
 const goToPrev = () => {
-  if (currentCalendarView.value === StatusEnum.MONTHLY_VIEW) {
+  if (currentCalendarView.value === StatusEnum.MONTH_VIEW) {
     currentDate.value = subMonths(currentDate.value, 1);
-  } else if (currentCalendarView.value === StatusEnum.WEEKLY_VIEW) {
+  } else if (currentCalendarView.value === StatusEnum.WEEK_VIEW) {
     currentDate.value = subWeeks(currentDate.value, 1);
   }
 };
@@ -109,7 +109,7 @@ const changeDate = (date: Date) =>
  * POPOVER
  **************************************/
 const popoverRef = ref(null);
-const { popoverShow, todaysEvent, togglePopover } = usePopover(popoverRef);
+const { popoverShow, todaysEvent, openPopover, closePopover } = usePopover(popoverRef);
 
 /**************************************
  * MODAL
@@ -142,7 +142,7 @@ const closeModal = () => {
 </script>
 
 <template>
-  <div class="w-full h-full lg:pb-4 flex flex-col">
+  <div class="w-full h-full flex flex-col">
     <Header
       :now="now"
       :current-date="currentDate"
@@ -164,7 +164,9 @@ const closeModal = () => {
       :primary-color="primaryColor"
       :events="events"
       :sunday-start-week="sundayStartWeek"
-      @toggle-popover="togglePopover"
+      :popover-element="popoverRef"
+      @toggle-popover="openPopover"
+      @clean-popover="closePopover"
       @open-modal="openModal"
     ></component>
 
@@ -183,7 +185,7 @@ const closeModal = () => {
       <slot
         name="eventDialog"
         :eventDialogData="todaysEvent"
-        :closeEventDialog="togglePopover"
+        :closeEventDialog="closePopover"
       />
     </div>
 
@@ -192,7 +194,7 @@ const closeModal = () => {
       <Modal
         v-if="modalShow"
         @close-modal="closeModal"
-        @toggle-popover="togglePopover"
+        @toggle-popover="openPopover"
         :day="modalDay"
         :events="modalEvents"
         :primary-color="primaryColor"
