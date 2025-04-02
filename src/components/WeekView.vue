@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
                 event.background ?? primaryColor
               }-50 text-${event.background ?? primaryColor}-600`,
             ]"
-            :style="eventPosition(event)"
+            :style="eventPosition(event, day.date)"
             @click.stop="
               event.eventCount === 1
                 ? handlePopoverToggle($event, event)

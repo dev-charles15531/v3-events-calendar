@@ -7,6 +7,11 @@ import {
   isToday,
   differenceInMinutes,
   isSameDay,
+  startOfDay,
+  endOfDay,
+  differenceInCalendarDays,
+  isWithinInterval,
+  differenceInDays,
 } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { computed, ComputedRef } from "vue";
@@ -35,7 +40,10 @@ export const useWeekView = (
   weekDays: ComputedRef<WeekDays[]>;
   formatHour: (hour: number) => string;
   formatDate: (date: Date, formatStr: string) => string;
-  eventPosition: (event: CalendarEvent) => { top: string; height: string };
+  eventPosition: (
+    event: CalendarEvent,
+    currentDate: Date
+  ) => { top: string; height: string };
   eventTime: (event: CalendarEvent) => string[];
 } => {
   const getZonedDate = (date: Date) => toZonedTime(date, props.timezone);
@@ -51,39 +59,116 @@ export const useWeekView = (
     const end = endOfWeek(props.currentDate, {
       weekStartsOn: props.sundayStartWeek ? 0 : 1,
     });
-  
-    const days: WeekDays[] = eachDayOfInterval({ start, end }).map<WeekDays>((date) => {
-      const eventsForDay = props.events.filter((event: CalendarEvent) =>
-        isSameDay(getZonedDate(parseISO(event.time.start)), date)
-      );
-  
-      // Group events by their start time
-      const groupedEvents = eventsForDay.reduce((acc: Record<string, CalendarEvent[]>, event) => {
-        const eventStart = getZonedDate(parseISO(event.time.start));
-        const hourKey = `${eventStart.getHours()}:${String(eventStart.getMinutes()).padStart(2, '0')}`;
-        
-        acc[hourKey] = acc[hourKey] || [];
-        acc[hourKey].push(event);
-        return acc;
-      }, {});
-  
-      // Create enhanced event objects
-      const enhancedEvents = Object.entries(groupedEvents).map(([timeSlot, events]) => {
-        const baseEvent = events[0];
+
+    const days: WeekDays[] = eachDayOfInterval({ start, end }).map<WeekDays>(
+      (date) => {
+        const eventsForDay = props.events?.filter((event: CalendarEvent) => {
+          const eventStart = getZonedDate(parseISO(event.time.start));
+          const eventEnd = getZonedDate(parseISO(event.time.end));
+          const currDate = getZonedDate(date);
+
+          const diffBtwEvents =
+            differenceInDays(startOfDay(eventEnd), startOfDay(eventStart)) + 1;
+
+          if (diffBtwEvents <= 1) {
+            return isSameDay(
+              getZonedDate(parseISO(event.time.start)),
+              currDate
+            );
+          } else {
+            return isWithinInterval(currDate, {
+              start: startOfDay(eventStart),
+              end: eventEnd,
+            });
+          }
+        });
+
+        const groupedEvents = eventsForDay
+          .sort(
+            (a, b) =>
+              getZonedDate(parseISO(a.time.start)).getTime() -
+              getZonedDate(parseISO(b.time.start)).getTime()
+          )
+          // Merge overlapping events
+          .reduce(
+            (
+              groups: Array<{
+                start: Date;
+                end: Date;
+                events: CalendarEvent[];
+              }>,
+              event
+            ) => {
+              const eventStart = getZonedDate(parseISO(event.time.start));
+              const eventEnd = getZonedDate(parseISO(event.time.end));
+
+              // Find overlapping group
+              const overlappingGroup = groups.find(
+                (group) => eventStart < group.end && eventEnd > group.start
+              );
+
+              if (overlappingGroup) {
+                // Expand group time bounds
+                overlappingGroup.start =
+                  overlappingGroup.start < eventStart
+                    ? overlappingGroup.start
+                    : eventStart;
+                overlappingGroup.end =
+                  overlappingGroup.end > eventEnd
+                    ? overlappingGroup.end
+                    : eventEnd;
+                overlappingGroup.events.push(event);
+              } else {
+                // Create new group
+                groups.push({
+                  start: eventStart,
+                  end: eventEnd,
+                  events: [event],
+                });
+              }
+
+              return groups;
+            },
+            []
+          )
+          // Convert to hour-key format
+          .reduce((acc: Record<string, CalendarEvent[]>, group) => {
+            // Get earliest start time in the group
+            const earliestStart = group.events.reduce((min, event) => {
+              const eventStart = getZonedDate(parseISO(event.time.start));
+              return eventStart < min ? eventStart : min;
+            }, group.start);
+
+            const hourKey = `${earliestStart.getHours()}:${String(
+              earliestStart.getMinutes()
+            ).padStart(2, "0")}`;
+
+            acc[hourKey] = acc[hourKey] || [];
+            acc[hourKey].push(...group.events);
+
+            return acc;
+          }, {});
+
+        // Create enhanced event objects
+        const enhancedEvents = Object.entries(groupedEvents).map(
+          ([_, events]) => {
+            const baseEvent = events[0];
+            return {
+              ...baseEvent,
+              eventCount: events.length,
+              timeSlotEvents: events.length > 1 ? events : undefined,
+            };
+          }
+        );
+
         return {
-          ...baseEvent,
-          eventCount: events.length,
-          timeSlotEvents: events.length > 1 ? events : undefined,
+          date,
+          isToday: isToday(date),
+          events: enhancedEvents,
         };
-      });
-  
-      return {
-        date,
-        isToday: isToday(date),
-        events: enhancedEvents,
-      };
-    });
-  
+      }
+    );
+
     return days;
   });
 
@@ -106,24 +191,46 @@ export const useWeekView = (
    * @returns {Object} - An object with "top" and "height" properties containing the CSS values.
    */
   const eventPosition = (
-    event: CalendarEvent
+    event: CalendarEvent,
+    currentDate: Date
   ): { top: string; height: string } => {
-    const start = getZonedDate(parseISO(event.time.start));
-    const end = getZonedDate(parseISO(event.time.end));
-    const startMinutes = start.getHours() * 60 + start.getMinutes();
-    const duration = differenceInMinutes(end, start);
+    const DAY_MINUTES = 1440; // Keep original constant
+    const START_OFFSET = 30; // Your original start offset
+    const DURATION_EXTRA = 60; // Your original duration padding
 
-    const topPercentage = ((startMinutes + 30) / 1440) * 100;
-    const heightPercentage = Math.min(
-      ((duration + 60) / 1440) * 100,
-      100 - topPercentage
+    const eventStart = getZonedDate(parseISO(event.time.start));
+    const eventEnd = getZonedDate(parseISO(event.time.end));
+
+    // Get current day boundaries
+    const dayStart = startOfDay(currentDate);
+    const dayEnd = endOfDay(currentDate);
+
+    // Calculate visible portion of event for this day
+    const visibleStart = eventStart < dayStart ? dayStart : eventStart;
+    const visibleEnd = eventEnd > dayEnd ? dayEnd : eventEnd;
+
+    // Convert to minutes with original offsets
+    const visibleStartMinutes =
+      differenceInMinutes(visibleStart, dayStart) + START_OFFSET;
+    const visibleDuration =
+      differenceInMinutes(visibleEnd, visibleStart) + DURATION_EXTRA;
+
+    // Clamp values to stay within day bounds
+    const clampedStart = Math.max(
+      0,
+      Math.min(visibleStartMinutes, DAY_MINUTES)
+    );
+    const maxPossibleHeight = DAY_MINUTES - clampedStart;
+    const clampedHeight = Math.max(
+      0,
+      Math.min(visibleDuration, maxPossibleHeight)
     );
 
+    const top = (clampedStart / DAY_MINUTES) * 100;
+
     return {
-      // Used mins in 22(1320) hours instead of the normal 24(1440)
-      // This is to account for the added row in the time column for the display of weekdays and the 12AM row
-      top: `${((startMinutes + 30) / 1440) * 100}%`,
-      height: `${heightPercentage}%`,
+      top: `${top < 4 ? 4 : top}%`,
+      height: `${(clampedHeight / DAY_MINUTES) * 100}%`,
     };
   };
 
@@ -133,7 +240,6 @@ export const useWeekView = (
    * @returns {string[]} - An array with two elements, the start time in 12-hour format with AM/PM,
    * and the end time in the same format.
    */
-
   const eventTime = (event: CalendarEvent): string[] => {
     const start = getZonedDate(parseISO(event.time.start));
     const end = getZonedDate(parseISO(event.time.end));
