@@ -1,6 +1,6 @@
 {
   "name": "v3-events-calendar",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple and customizable events calendar for vue 3",
   "type": "module",
   "main": "./dist/v3-events-calendar.umd.js",
