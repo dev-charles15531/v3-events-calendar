@@ -19,12 +19,14 @@ Currently it is responsive on mobile and desktop screens.
 ![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss1.png)
 ![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss2.png)
 ![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss3.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss4.png)
 
 ### Mobile View
-
-![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss4.png)
 ![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss5.png)
 ![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss6.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss7.png)
+![](https://github.com/dev-charles15531/v3-events-calendar/blob/main/public/ss8.png)
+
 
 ## Usage
 
@@ -144,7 +146,9 @@ If you encounter any issues, please open an issue on our [GitHub Issues page](ht
 - [Vue 3](https://vuejs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Floating UI](https://floating-ui.com/)
+- [date-fns](https://date-fns.org/)
 - [Vue Datepicker](https://vue3datepicker.com/)
+- [Heroicons](https://heroicons.com/)
 
 ## License
 

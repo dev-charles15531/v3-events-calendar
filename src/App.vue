@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import Calendar from "./components/Calendar.vue";
+import Calendar from "./components/V3EventsCalendar.vue";
 
 // all events data
 const events = ref([
