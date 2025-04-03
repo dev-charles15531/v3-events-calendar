@@ -201,7 +201,7 @@ const handleCalendarViewChange = (newView: string) => {
               <div class="py-1">
                 <MenuItem v-slot="{ active }">
                   <span
-                    @click.prevent="
+                    @click="
                       handleCalendarViewChange(StatusEnum.DAY_VIEW)
                     "
                     :class="[

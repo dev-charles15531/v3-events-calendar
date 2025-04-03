@@ -75,7 +75,7 @@ const events = ref([
     id: 7,
     url: "https://github.com/dev-charles15531",
     title: "Dummy Event Name 7",
-    time: { start: "2024-12-06T12:00", end: "2024-12-06T14:00" },
+    time: { start: "2025-03-15T12:00", end: "2025-03-15T14:00" },
     description:
       "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores assumenda corporis doloremque et expedita molestias necessitatibus quam quas temporibus veritatis. Deserunt excepturi illum nobis perferendis praesentium repudiandae saepe sapiente voluptatem!",
     image: "test-img.png",

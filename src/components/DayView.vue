@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from "vue";
-import { useWeekView } from "../composables/useWeekView";
 import { CalendarProps } from "../types/calendar";
 import { useUtils } from "../composables/useUtils";
+import { useDayView } from "../composables/useDayView";
 
 const emit = defineEmits([
   "togglePopover",
@@ -18,7 +18,7 @@ const { formatHour, formatDate, handlePopoverToggle, handleModalOpen } =
  **************************************/
 const props = defineProps<CalendarProps>();
 
-const { weekDays, eventPosition, eventTime } = useWeekView(props);
+const { dayEvents, eventPosition, eventTime } = useDayView(props);
 
 const timeColumn = ref(null);
 const daysGrid = ref(null);
@@ -89,34 +89,34 @@ onBeforeUnmount(() => {
     <!-- Days Grid -->
     <div
       ref="daysGrid"
-      class="flex-1 grid grid-cols-7 overflow-auto hide-scrollbar"
+      class="flex-1 grid grid-cols-1 overflow-auto hide-scrollbar"
       @scroll="syncScroll"
     >
-      <div
-        v-for="day in weekDays"
-        :key="day.date.toDateString"
-        class="relative border-l border-gray-300"
-      >
+      <div class="relative border-l border-gray-300">
         <!-- Day Header -->
         <div
-          class="h-[50px] w-[99.7%] bg-white sticky top-0 border-b border-gray-300 z-10 px-1 py-1 text-xs md:text-sm font-medium"
+          class="h-[50px] w-[99.7%] bg-white sticky top-0 border-b border-gray-300 z-10 pl-5 md:pl-8 pr-1 py-1 text-xs md:text-sm font-medium"
         >
-          <div class="text-gray-700 text-center hidden md:block">
-            {{ formatDate(day.date, "EEE", props.timezone) }}
-          </div>
-          <div class="text-gray-700 text-center md:hidden">
-            {{ formatDate(day.date, "EEEEE", props.timezone) }}
-          </div>
-          <div
-            class="flex items-center justify-center text-[0.65rem] md:text-sm"
-          >
-            <div
-              :class="[
-                'h-5 md:h-6 w-5 md:w-6 flex flex-col justify-center items-center rounded-full text-center',
-                day.isToday ? `bg-${primaryColor}-600 text-white` : '',
-              ]"
-            >
-              {{ formatDate(day.date, "d", props.timezone) }}
+          <div class="h-full flex flex-col justify-center">
+            <div class="flex items-center">
+              <div class="text-gray-700 text-center font-medium">
+                {{ formatDate(dayEvents.date, "EEEE", props.timezone) }}
+              </div>
+              <div
+                class="ml-1.5 flex justify-center items-center text-[0.65rem] md:text-sm"
+              >
+                <div
+                  :class="[
+                    'h-6 md:h-7 w-6 md:w-7 flex flex-col justify-center items-center rounded-full text-center',
+
+                    dayEvents.isToday
+                      ? `bg-${primaryColor}-600 text-white`
+                      : 'font-bold text-gray-700 text-base',
+                  ]"
+                >
+                  {{ formatDate(dayEvents.date, "d", props.timezone) }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -133,19 +133,22 @@ onBeforeUnmount(() => {
         <!-- Events -->
         <div class="absolute inset-0 pointer-events-none">
           <div
-            v-for="event in day.events"
+            v-for="event in dayEvents.events"
             :key="event.id"
-            class="absolute left-0.5 right-0.5 rounded md:rounded-lg px-0.5 md:px-1.5 lg:px-2 py-2 md:py-2.5 text-[0.4rem] md:text-sm md:border shadow-sm pointer-events-auto cursor-pointer"
+            class="absolute w-[80%] md:w-1/2 left-[10%] md:left-1/4 rounded md:rounded-lg px-0.5 md:px-1.5 lg:px-2 py-2 md:py-2.5 text-[0.4rem] md:text-sm md:border shadow-sm pointer-events-auto cursor-pointer"
             :class="[
               `border-${event.background ?? primaryColor}-600 bg-${
                 event.background ?? primaryColor
               }-50 text-${event.background ?? primaryColor}-600`,
             ]"
-            :style="eventPosition(event, day.date)"
+            :style="eventPosition(event, dayEvents.date)"
             @click.stop="
               event.eventCount === 1
                 ? handlePopoverToggle($event, event)
-                : handleModalOpen(day.date.toString(), event.timeSlotEvents)
+                : handleModalOpen(
+                    dayEvents.date.toString(),
+                    event.timeSlotEvents
+                  )
             "
           >
             <div

@@ -9,19 +9,12 @@ import {
   isSameDay,
   startOfDay,
   endOfDay,
-  differenceInCalendarDays,
   isWithinInterval,
   differenceInDays,
 } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 import { computed, ComputedRef } from "vue";
 import { CalendarEvent, CalendarProps } from "../types/calendar";
-
-// interface WeekDays {
-//   date: Date;
-//   isToday: boolean;
-//   events: (CalendarEvent & { eventCount: number })[];
-// }
+import { useUtils } from "./useUtils";
 
 interface EnhancedCalendarEvent extends CalendarEvent {
   eventCount: number;
@@ -34,25 +27,14 @@ interface WeekDays {
   events: EnhancedCalendarEvent[];
 }
 
-export const useWeekView = (
-  props: CalendarProps
-): {
-  weekDays: ComputedRef<WeekDays[]>;
-  formatHour: (hour: number) => string;
-  formatDate: (date: Date, formatStr: string) => string;
-  eventPosition: (
-    event: CalendarEvent,
-    currentDate: Date
-  ) => { top: string; height: string };
-  eventTime: (event: CalendarEvent) => string[];
-} => {
-  const getZonedDate = (date: Date) => toZonedTime(date, props.timezone);
+export const useWeekView = (props: CalendarProps) => {
+  const { getZonedDate } = useUtils();
 
   /**
    * Compute the days of the week for the current date
    * along with any events that fall on those days.
    */
-  const weekDays = computed(() => {
+  const weekDays: ComputedRef<WeekDays[]> = computed(() => {
     const start = startOfWeek(props.currentDate, {
       weekStartsOn: props.sundayStartWeek ? 0 : 1,
     });
@@ -63,16 +45,22 @@ export const useWeekView = (
     const days: WeekDays[] = eachDayOfInterval({ start, end }).map<WeekDays>(
       (date) => {
         const eventsForDay = props.events?.filter((event: CalendarEvent) => {
-          const eventStart = getZonedDate(parseISO(event.time.start));
-          const eventEnd = getZonedDate(parseISO(event.time.end));
-          const currDate = getZonedDate(date);
+          const eventStart = getZonedDate(
+            parseISO(event.time.start),
+            props.timezone
+          );
+          const eventEnd = getZonedDate(
+            parseISO(event.time.end),
+            props.timezone
+          );
+          const currDate = getZonedDate(date, props.timezone);
 
           const diffBtwEvents =
             differenceInDays(startOfDay(eventEnd), startOfDay(eventStart)) + 1;
 
           if (diffBtwEvents <= 1) {
             return isSameDay(
-              getZonedDate(parseISO(event.time.start)),
+              getZonedDate(parseISO(event.time.start), props.timezone),
               currDate
             );
           } else {
@@ -86,8 +74,8 @@ export const useWeekView = (
         const groupedEvents = eventsForDay
           .sort(
             (a, b) =>
-              getZonedDate(parseISO(a.time.start)).getTime() -
-              getZonedDate(parseISO(b.time.start)).getTime()
+              getZonedDate(parseISO(a.time.start), props.timezone).getTime() -
+              getZonedDate(parseISO(b.time.start), props.timezone).getTime()
           )
           // Merge overlapping events
           .reduce(
@@ -99,8 +87,14 @@ export const useWeekView = (
               }>,
               event
             ) => {
-              const eventStart = getZonedDate(parseISO(event.time.start));
-              const eventEnd = getZonedDate(parseISO(event.time.end));
+              const eventStart = getZonedDate(
+                parseISO(event.time.start),
+                props.timezone
+              );
+              const eventEnd = getZonedDate(
+                parseISO(event.time.end),
+                props.timezone
+              );
 
               // Find overlapping group
               const overlappingGroup = groups.find(
@@ -135,7 +129,10 @@ export const useWeekView = (
           .reduce((acc: Record<string, CalendarEvent[]>, group) => {
             // Get earliest start time in the group
             const earliestStart = group.events.reduce((min, event) => {
-              const eventStart = getZonedDate(parseISO(event.time.start));
+              const eventStart = getZonedDate(
+                parseISO(event.time.start),
+                props.timezone
+              );
               return eventStart < min ? eventStart : min;
             }, group.start);
 
@@ -173,18 +170,6 @@ export const useWeekView = (
   });
 
   /**
-   * Format a given hour in a 12-hour format with AM/PM.
-   * @param {number} hour - The hour to format (0-23).
-   * @returns {string} - The formatted hour string.
-   */
-  const formatHour = (hour: number): string => {
-    const date = getZonedDate(props.currentDate);
-    date.setHours(hour % 24);
-    date.setMinutes(0);
-    return format(date, "ha");
-  };
-
-  /**
    * Calculate the top and height CSS properties for an event element
    * so that it spans the correct portion of the day in the week view.
    * @param {CalendarEvent} event - The event to calculate the position for.
@@ -194,12 +179,12 @@ export const useWeekView = (
     event: CalendarEvent,
     currentDate: Date
   ): { top: string; height: string } => {
-    const DAY_MINUTES = 1440; // Keep original constant
-    const START_OFFSET = 30; // Your original start offset
-    const DURATION_EXTRA = 60; // Your original duration padding
+    const DAY_MINUTES = 1440; // 24 hrs in one day(24 * 60)
+    const START_OFFSET = 30; // for some reason, maybe due to the added rows, top position is off, hence this offset :(
+    const DURATION_EXTRA = 60; // same thing here to account for added rows and time starting from 12AM
 
-    const eventStart = getZonedDate(parseISO(event.time.start));
-    const eventEnd = getZonedDate(parseISO(event.time.end));
+    const eventStart = getZonedDate(parseISO(event.time.start), props.timezone);
+    const eventEnd = getZonedDate(parseISO(event.time.end), props.timezone);
 
     // Get current day boundaries
     const dayStart = startOfDay(currentDate);
@@ -241,8 +226,8 @@ export const useWeekView = (
    * and the end time in the same format.
    */
   const eventTime = (event: CalendarEvent): string[] => {
-    const start = getZonedDate(parseISO(event.time.start));
-    const end = getZonedDate(parseISO(event.time.end));
+    const start = getZonedDate(parseISO(event.time.start), props.timezone);
+    const end = getZonedDate(parseISO(event.time.end), props.timezone);
 
     const formatTime = (date: Date) =>
       date.getMinutes() === 0
@@ -252,20 +237,9 @@ export const useWeekView = (
     return [formatTime(start), formatTime(end)];
   };
 
-  /**
-   * Format a given date in the given format string.
-   * @param {Date} date - The date to format.
-   * @param {string} formatStr - The format string to use.
-   * @returns {string} - The formatted date string.
-   */
-  const formatDate = (date: Date, formatStr: string): string =>
-    format(getZonedDate(date), formatStr);
-
   return {
     weekDays,
-    formatHour,
     eventPosition,
     eventTime,
-    formatDate,
   };
 };

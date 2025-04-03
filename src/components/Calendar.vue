@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from "vue";
 import Header from "./Header.vue";
-import { addMonths, addWeeks, subMonths, subWeeks } from "date-fns";
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  subDays,
+  subMonths,
+  subWeeks,
+} from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import Footer from "./Footer.vue";
 import { usePopover } from "../composables/popover";
@@ -10,6 +17,7 @@ import { CalendarEvent, StatusEnum } from "../types/calendar";
 import { Color } from "../types";
 import MonthView from "./MonthView.vue";
 import WeekView from "./WeekView.vue";
+import DayView from "./DayView.vue";
 
 /**************************************
  * PROPS
@@ -44,6 +52,7 @@ const props = defineProps({
 const viewComponents = {
   month: MonthView,
   week: WeekView,
+  day: DayView,
 };
 
 const currentCalendarView = ref(StatusEnum.MONTH_VIEW);
@@ -58,6 +67,8 @@ const changeCalendarView = (view: StatusEnum) => {
     currentCalendarView.value = StatusEnum.MONTH_VIEW;
   } else if (view === StatusEnum.WEEK_VIEW) {
     currentCalendarView.value = StatusEnum.WEEK_VIEW;
+  } else if (view === StatusEnum.DAY_VIEW) {
+    currentCalendarView.value = StatusEnum.DAY_VIEW;
   }
 };
 
@@ -78,6 +89,8 @@ const goToNext = () => {
     currentDate.value = addMonths(currentDate.value, 1);
   } else if (currentCalendarView.value === StatusEnum.WEEK_VIEW) {
     currentDate.value = addWeeks(currentDate.value, 1);
+  } else if (currentCalendarView.value === StatusEnum.DAY_VIEW) {
+    currentDate.value = addDays(currentDate.value, 1);
   }
 };
 
@@ -89,6 +102,8 @@ const goToPrev = () => {
     currentDate.value = subMonths(currentDate.value, 1);
   } else if (currentCalendarView.value === StatusEnum.WEEK_VIEW) {
     currentDate.value = subWeeks(currentDate.value, 1);
+  } else if (currentCalendarView.value === StatusEnum.DAY_VIEW) {
+    currentDate.value = subDays(currentDate.value, 1);
   }
 };
 
@@ -109,7 +124,8 @@ const changeDate = (date: Date) =>
  * POPOVER
  **************************************/
 const popoverRef = ref(null);
-const { popoverShow, todaysEvent, openPopover, closePopover } = usePopover(popoverRef);
+const { popoverShow, todaysEvent, openPopover, closePopover } =
+  usePopover(popoverRef);
 
 /**************************************
  * MODAL
@@ -161,8 +177,8 @@ const closeModal = () => {
       :is="viewComponents[currentCalendarView]"
       :current-date="currentDate"
       :timezone="timezone"
-      :primary-color="primaryColor"
-      :events="events"
+      :primary-color="primaryColor as Color"
+      :events="events as CalendarEvent[]"
       :sunday-start-week="sundayStartWeek"
       :popover-element="popoverRef"
       @toggle-popover="openPopover"
